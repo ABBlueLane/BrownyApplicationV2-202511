@@ -505,6 +505,7 @@ class __MachineContentState extends State<_MachineContent>
 
           // flagกันคลิกเบิ้ล
           _clearPurchaseClicked();
+          AppOverlays.hideLoading();
           if (orderResult.hasError) {
             AppOverlays.showBrownyErrorDialog(
               context,

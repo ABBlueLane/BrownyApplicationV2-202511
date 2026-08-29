@@ -22,7 +22,7 @@ class Unprocessable extends AuthenExceptions {
 
   @override
   String toUiMessage(BuildContext context) {
-    return context.wording.errorUi;
+    return super.message ?? context.wording.errorUi;
   }
 
   @override

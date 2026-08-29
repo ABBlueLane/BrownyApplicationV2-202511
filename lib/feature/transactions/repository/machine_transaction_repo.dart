@@ -143,15 +143,22 @@ class MachineRepo extends AppRepository with MachineTransactionDataSourceMixin {
       }
       return RepoResult.success(data: response.data);
     } on DioException catch (dioEx) {
-      if (dioEx.response?.isDuplicated == true) {
+      try {
         final serverMessage = MachineOrderResponse.fromJson(
           dioEx.response?.data,
         );
         return RepoResult.error(
           error: Unprocessable(serverMessage.message),
         );
+      } catch (_) {
+        return RepoResult.error(
+          error: Exception(
+            dioEx.response?.data?['message'] ??
+                dioEx.message ??
+                'Network error occurred',
+          ),
+        );
       }
-      return RepoResult.error(error: dioEx);
     } on Exception catch (e) {
       return RepoResult.error(error: e);
     }

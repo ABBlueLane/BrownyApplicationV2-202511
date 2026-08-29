@@ -347,10 +347,13 @@ class _TransactionSelectedPageState extends State<TransactionSelectedPage>
           }
           // flagกันคลิกเบิ้ล
           _clearPurchaseClicked();
-          AppOverlays.showBrownyErrorDialog(
-            context,
-            error: orderResult.error,
-          );
+          AppOverlays.hideLoading();
+          if (orderResult.hasError) {
+            AppOverlays.showBrownyErrorDialog(
+              context,
+              error: orderResult.error,
+            );
+          }
           return;
         }
         return;

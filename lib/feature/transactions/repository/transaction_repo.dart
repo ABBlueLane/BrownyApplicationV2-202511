@@ -152,14 +152,23 @@ class TransactionRepo extends AppRepository with TransactionDataSourceMixin {
         ),
       );
     } on DioException catch (dio) {
-      // Handle Dio exceptions (network errors, timeouts, etc.)
-      return RepoResult.error(
-        error: Exception(
-          dio.response?.data?['message'] ??
-              dio.message ??
-              'Network error occurred',
-        ),
-      );
+      try {
+        final serverMessage = CouponOrderResponse.fromJson(
+          dio.response?.data,
+        );
+        return RepoResult.error(
+          error: Unprocessable(serverMessage.message),
+        );
+      } catch (_) {
+        // Handle Dio exceptions (network errors, timeouts, etc.)
+        return RepoResult.error(
+          error: Exception(
+            dio.response?.data?['message'] ??
+                dio.message ??
+                'Network error occurred',
+          ),
+        );
+      }
     } catch (e) {
       return RepoResult.error(error: Exception(e.toString()));
     }
