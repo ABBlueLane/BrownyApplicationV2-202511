@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Browny Application V3 — Flutter app for laundry service management. Targets Android and iOS (Web planned). Package name: `browny_applications_new`. Current version: `3.0.3+63`. Dart SDK `>=3.10.0 <4.0.0`.
+Browny Application V3 — Flutter app for laundry service management. Targets Android and iOS (Web planned). Package name: `browny_applications_new`. Current version: `3.0.8+77`. Dart SDK `>=3.10.0 <4.0.0`. Pinned Flutter: `3.44.9` (Dart 3.12.2). SDK at `/opt/homebrew/share/flutter` is a git checkout held at tag `3.44.9` (detached HEAD). `flutter doctor` reporting channel `[user-branch]` / "unknown source" is **expected and harmless** for this pinned setup — do NOT run `flutter upgrade` or `flutter channel` (stable has since moved to 3.47.x). To change Flutter version: `git -C /opt/homebrew/share/flutter checkout <tag>` then `flutter --version`.
 
 ## Commonly Used Commands
 
