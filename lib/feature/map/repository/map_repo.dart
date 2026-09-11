@@ -4,6 +4,7 @@ import 'package:browny_applications_new/core/data/remote/models/request/store_lo
 import 'package:browny_applications_new/core/data/remote/models/response/map_location_response.dart';
 import 'package:browny_applications_new/core/data/remote/models/response/store_detail_response.dart';
 import 'package:browny_applications_new/core/data/repo/app_repository.dart';
+import 'package:browny_applications_new/core/utils/google_maps_helper.dart';
 import 'package:browny_applications_new/core/utils/repo_result.dart';
 import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -75,7 +76,7 @@ class MapRepo extends AppRepository with MapDataSourceMixin {
           final icons = await converter.getMarkerIcons(
             activeUrl: firstItemOfType.markerIconActiveUrl!,
             inactiveUrl: firstItemOfType.markerIconInactiveUrl!,
-            width: 100,
+            width: GoogleMapsHelper.baseMarkerWidth,
           );
 
           typeToIcons[type] = icons;

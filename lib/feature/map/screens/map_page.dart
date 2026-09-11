@@ -57,6 +57,8 @@ class _MapContentState extends State<MapContent> {
   GoogleMapController? _mapController;
   Set<Marker> _markers = {};
   LatLng? _currentPosition;
+  double _currentZoom = GoogleMapsHelper.defaultZoom;
+  bool _isResizingMarkers = false;
 
   bool _isSearching = false;
 
@@ -188,6 +190,26 @@ class _MapContentState extends State<MapContent> {
     }).toSet();
   }
 
+  /// อัปเดตขนาด pin ตาม zoom เมื่อกล้องหยุดเคลื่อน
+  Future<void> _updateMarkerSizeForZoom() async {
+    if (_isResizingMarkers || _viewmodel.storeList.isEmpty) return;
+
+    final targetWidth = GoogleMapsHelper.calculateMarkerWidth(_currentZoom);
+    if (targetWidth == _viewmodel.markerWidth) return;
+
+    _isResizingMarkers = true;
+    try {
+      final changed = await _viewmodel.resizeMarkerIcons(targetWidth);
+      if (changed && mounted) {
+        setState(() {
+          _markers = _createMarkersFromStores(_viewmodel.storeList);
+        });
+      }
+    } finally {
+      _isResizingMarkers = false;
+    }
+  }
+
   /// Handle marker tap
   Future<void> _onMarkerTapped(StoreLocationItem store) async {
     AppOverlays.showLoading(context);
@@ -316,6 +338,12 @@ class _MapContentState extends State<MapContent> {
                 mapType: MapType.normal,
                 onMapCreated: (GoogleMapController controller) {
                   _mapController = controller;
+                },
+                onCameraMove: (CameraPosition position) {
+                  _currentZoom = position.zoom;
+                },
+                onCameraIdle: () {
+                  unawaited(_updateMarkerSizeForZoom());
                 },
               ),
 

@@ -12,6 +12,27 @@ class GoogleMapsHelper {
   /// ค่า default ของ Zoom level
   static const double defaultZoom = 15.0;
 
+  /// ความกว้าง marker ที่ zoom ปกติ (defaultZoom)
+  static const int baseMarkerWidth = 80;
+
+  /// ความกว้าง marker ต่ำสุดเมื่อซูมออกมาก
+  static const int minMarkerWidth = 20;
+
+  /// ความกว้าง marker สูงสุดเมื่อซูมเข้ามาก
+  static const int maxMarkerWidth = 100;
+
+  /// คำนวณความกว้าง marker ตาม zoom เป็น bucket
+  /// เพื่อลดการ regenerate BitmapDescriptor บ่อยเกินไป
+  ///
+  /// zoom < 11 → 20px, < 13 → 32px, < 14.5 → 48px, < 16 → 80px, นอกนั้น → 100px
+  static int calculateMarkerWidth(double zoom) {
+    if (zoom < 11) return minMarkerWidth;
+    if (zoom < 13) return 32;
+    if (zoom < 14.5) return 48;
+    if (zoom < 16) return baseMarkerWidth;
+    return maxMarkerWidth;
+  }
+
   /// สร้าง Camera Position
   static CameraPosition createCameraPosition({
     required LatLng target,
