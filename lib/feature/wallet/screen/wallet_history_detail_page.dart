@@ -23,7 +23,7 @@ class WalletHistoryDetailPage extends StatelessWidget {
         ),
         leading: BackButton(
           color: AppColors.black2A,
-          onPressed: () => context.pop(),
+          onPressed: () => context.safePop(),
         ),
       ),
       body: SafeArea(

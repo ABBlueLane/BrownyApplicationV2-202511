@@ -270,7 +270,7 @@ class _MachineStatusContentState extends State<MachineStatusContent>
                 onPressed: notStarted
                     ? _onCheckStatusPressed
                     : () {
-                        context.pop();
+                        context.safePop();
                       },
                 child: AppText(
                   notStarted

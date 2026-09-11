@@ -55,7 +55,7 @@ class _CouponVoucherSelectedState extends State<CouponVoucherSelected> {
         ),
         leading: BackButton(
           color: AppColors.textPrimary,
-          onPressed: () => context.pop(),
+          onPressed: () => context.safePop(),
         ),
       ),
       persistentFooterDecoration: BoxDecoration(

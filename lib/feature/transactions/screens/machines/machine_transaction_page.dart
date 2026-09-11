@@ -82,7 +82,7 @@ class __MachineContentState extends State<_MachineContent> {
           message: context.wording.errorUi,
           onConfirm: () {
             if (!mounted) return;
-            context.pop();
+            context.safePop();
           },
         );
         return;
@@ -99,7 +99,7 @@ class __MachineContentState extends State<_MachineContent> {
           message: context.wording.tryOtherMachine,
           onConfirm: () {
             if (!mounted) return;
-            context.pop();
+            context.safePop();
           },
         );
         return;
@@ -115,7 +115,7 @@ class __MachineContentState extends State<_MachineContent> {
           message: context.wording.tryOtherMachine,
           onConfirm: () {
             if (!mounted) return;
-            context.pop();
+            context.safePop();
           },
         );
         return;

@@ -173,7 +173,7 @@ class _MyProfileAndPreferencesContentState
                         InkWell(
                           onTap: () {
                             if (context.canPop()) {
-                              context.pop();
+                              context.safePop();
                               return;
                             }
                             HomePage.goReplacementPage(context);
@@ -544,7 +544,7 @@ class _MyProfileAndPreferencesContentState
                     .then((bypass) {
                       if (!mounted) return;
                       if (context.mounted && bypass != null) {
-                        context.pop();
+                        context.safePop();
                         switch (bypass.values.first) {
                           case HomePageState.home:
                             break;
@@ -1172,7 +1172,7 @@ class _MyProfileAndPreferencesContentState
                           final result = await _viewModel.logout();
                           AppOverlays.hideLoading();
                           if (result.isSuccess && context.mounted) {
-                            context.pop();
+                            context.safePop();
                             // context.pushNamedAndClear(
                             //   OnBoardingPage.pageName,
                             // );

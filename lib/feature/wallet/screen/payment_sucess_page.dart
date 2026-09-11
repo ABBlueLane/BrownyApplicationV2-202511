@@ -13,7 +13,6 @@ import 'package:browny_applications_new/res/strings/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -266,7 +265,7 @@ class _PaymentSuccessWidgetState extends State<PaymentSuccessWidget> {
         backgroundColor: AppColors.background,
         leading: BackButton(
           color: AppColors.textPrimary,
-          onPressed: () => context.pop(),
+          onPressed: () => context.safePop(),
         ),
         title: AppText(
           context.wording.transactionReceipt,
@@ -285,7 +284,7 @@ class _PaymentSuccessWidgetState extends State<PaymentSuccessWidget> {
         ),
         child: ElevatedButton(
           onPressed: () {
-            context.pop();
+            context.safePop();
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.darkBlue,

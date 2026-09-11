@@ -277,7 +277,7 @@ class _CreateAppPinContentState extends State<_CreateAppPinContent> {
                 // ถ้าอยู่ขั้นตอนที่ 2 → กลับไปขั้นตอนที่ 1
                 viewModel.reset();
               } else if (context.canPop()) {
-                context.pop();
+                context.safePop();
               }
             },
             icon: Icon(
@@ -500,7 +500,7 @@ class _CreateAppPinContentState extends State<_CreateAppPinContent> {
             },
           );
         } else {
-          context.pop();
+          context.safePop();
         }
       }
     });

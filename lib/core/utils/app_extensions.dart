@@ -1,4 +1,5 @@
 import 'package:browny_applications_new/core/data/remote/models/content_localize_data.dart';
+import 'package:browny_applications_new/feature/home/screens/home_page.dart';
 import 'package:browny_applications_new/res/colors/app_colors.dart';
 import 'package:browny_applications_new/res/dims/app_dims.dart';
 import 'package:dio/dio.dart';
@@ -80,6 +81,26 @@ extension AppBuildeContext on BuildContext {
       // ยังไม่เจอ route ที่ต้องการ ให้ pop ออก
       router.pop();
     }
+  }
+
+  /// Pop แบบปลอดภัย: เช็ค [GoRouter.canPop] ก่อนเรียก pop เสมอ
+  ///
+  /// `context.pop()` ปกติของ go_router จะ throw
+  /// `GoError('There is nothing to pop')` ทันทีถ้า route ปัจจุบันเป็นหน้าแรกสุด
+  /// ของ stack แล้ว (เช่น เปิดหน้าตรงจาก deep link, หรือกด back ซ้ำเร็วๆ)
+  /// ทำให้แอป crash จริงบน production (ดู Crashlytics: GoRouterDelegate.pop)
+  ///
+  /// ถ้า pop ไม่ได้ จะ fallback พากลับไปหน้า Home แทนการ crash
+  /// (พฤติกรรมเดียวกับที่ใช้อยู่แล้วใน receipt_machine_page.dart._popPage)
+  void safePop<T extends Object?>([T? result]) {
+    final router = GoRouter.of(this);
+    if (router.canPop()) {
+      router.pop<T>(result);
+      return;
+    }
+    popUntil(
+      predicate: (state) => state.name.orEmpty == HomePage.pageName,
+    );
   }
 
   String get languageCode => Localizations.localeOf(this).languageCode;

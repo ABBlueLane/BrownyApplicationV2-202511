@@ -186,7 +186,7 @@ class ScannerViewModel extends AppViewModel {
                   // ตรวจสอบประเภท QR Code จาก URL path
                   // Coupon: {url}/coupon/{uuid}
                   if (segments.contains('coupon')) {
-                    context.pop();
+                    context.safePop();
                     CouponVoucherPage.goToPage(
                       context,
                       autoCollectQRData: barcode.rawValue!,
@@ -196,7 +196,7 @@ class ScannerViewModel extends AppViewModel {
 
                   // Lucky Scan: {url}/lucky/draw/{uuid}
                   if (segments.contains('lucky') && segments.contains('draw')) {
-                    context.pop();
+                    context.safePop();
                     LuckyScanPage.goToPage(
                       context,
                       autoScanQRData: barcode.rawValue!,
@@ -223,7 +223,7 @@ class ScannerViewModel extends AppViewModel {
                         message: context.wording.errorUi,
                         onConfirm: () {
                           if (!context.mounted) return;
-                          context.pop();
+                          context.safePop();
                           // Resume scanning after 2 seconds
                           _resumeFlagScanning();
                         },
@@ -268,7 +268,7 @@ class ScannerViewModel extends AppViewModel {
                         message: message,
                         onConfirm: () {
                           if (!context.mounted) return;
-                          context.pop();
+                          context.safePop();
                           // Resume scanning after 2 seconds
                           _resumeFlagScanning();
                         },
@@ -280,7 +280,7 @@ class ScannerViewModel extends AppViewModel {
                       // DONG 2026-04-18
                       // ถ้าเข้า process นี้ จะ pop result machine
                       // กลับไปเพื่อตัดสินใจจากต้นทาง
-                      context.pop(machine);
+                      context.safePop(machine);
                       return;
                     }
                     // DONG 2026-04-12
@@ -297,7 +297,7 @@ class ScannerViewModel extends AppViewModel {
                 }
               case ScannerProcess.needResult:
                 {
-                  context.pop(barcode.rawValue!);
+                  context.safePop(barcode.rawValue!);
                   return;
                 }
             }

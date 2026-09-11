@@ -1099,7 +1099,7 @@ class TransactionsViewmodel extends AppViewModel
           // ถ้ามาจาก auto และ scan สำเร็จ เมื่อกดรับทราบจะ pop ออก
           if (fromAuto) {
             if (context.canPop()) {
-              context.pop();
+              context.safePop();
             }
           }
         },

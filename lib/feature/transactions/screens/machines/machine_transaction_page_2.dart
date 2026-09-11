@@ -242,7 +242,7 @@ class __MachineContentState extends State<_MachineContent>
 
         // Close WebView if open
         if (_paymentProcessing && context.canPop()) {
-          context.pop();
+          context.safePop();
         }
 
         _showDialogPaymentSuccess();
@@ -251,7 +251,7 @@ class __MachineContentState extends State<_MachineContent>
         _stopPolling();
 
         if (context.canPop()) {
-          context.pop();
+          context.safePop();
         }
 
         AppOverlays.showBrownyDialog(
@@ -481,7 +481,7 @@ class __MachineContentState extends State<_MachineContent>
                               horizontal: AppDims.size_16.w,
                             ),
                             child: ElevatedButton(
-                              onPressed: () => dialogContext.pop(),
+                              onPressed: () => dialogContext.safePop(),
                               child: AppText(context.wording.backToMainPage),
                             ),
                           ),
@@ -560,7 +560,7 @@ class __MachineContentState extends State<_MachineContent>
           return;
         }
         // ไม่เข้าทุกเงื่อนไข จะอนุญาตให้ pop ได้
-        context.pop();
+        context.safePop();
       },
       child: Scaffold(
         backgroundColor: AppColors.background,

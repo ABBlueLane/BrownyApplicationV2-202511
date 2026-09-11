@@ -135,7 +135,7 @@ class __TransactionAuthenContentState extends _CreateAppPinContentState {
     if (result.isSuccess && result.data!.isSuccess) {
       // Biometric สำเร็จ - pop กลับพร้อม result
       if (mounted && context.mounted) {
-        context.pop(true);
+        context.safePop(true);
       }
     } else {
       // Biometric ไม่สำเร็จ - แสดง PIN widget

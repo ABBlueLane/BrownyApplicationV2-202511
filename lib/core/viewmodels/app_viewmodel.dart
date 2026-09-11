@@ -11,12 +11,26 @@ abstract class AppViewModel extends ChangeNotifier {
   @protected
   late final AppPreferences appPreferences;
 
+  /// เก็บ instance ไว้ตอนสร้าง ViewModel (context ยัง mounted แน่นอน) แทนการ
+  /// `context.read<CustomerProvider>()` ใหม่ทุกครั้งที่เรียก [currentCustomerProvider]
+  ///
+  /// เพราะ CustomerProvider ถูก provide แค่ครั้งเดียวที่ root ของแอป (main.dart)
+  /// เป็น singleton ตลอดอายุแอป (ดู DevEnvironment._current: final field)
+  /// ไม่เคยถูกสร้างใหม่มาแทนที่แม้ตอน login/logout ก็แค่แก้ field ข้างในตัวเดิม
+  ///
+  /// ก่อนหน้านี้ getter นี้ไป context.read() ใหม่ทุกครั้ง ทำให้ถ้าเรียกหลัง await
+  /// ในตอนที่หน้าจอถูก pop ไปแล้ว (context unmount) จะ throw
+  /// "Null check operator used on a null value" ใน Provider._inheritedElementOf
+  /// (ดู Crashlytics: MachineTransactionViewmodel.fetchPaymentMethod)
+  @protected
+  late final CustomerProvider _customerProvider;
+
   AppViewModel({required this.context}) {
     appPreferences = context.read<AppEvnironment>().appPreferences;
+    _customerProvider = context.read<CustomerProvider>();
   }
 
-  CustomerProvider get currentCustomerProvider =>
-      context.read<CustomerProvider>();
+  CustomerProvider get currentCustomerProvider => _customerProvider;
 
   void attachContext(BuildContext context) {
     this.context = context;

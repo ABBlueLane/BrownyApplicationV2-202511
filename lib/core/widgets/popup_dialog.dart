@@ -162,7 +162,7 @@ class _PopupDialogState extends State<PopupDialog> {
                     child: GestureDetector(
                       // visualDensity: VisualDensity.compact,
                       onTap: () {
-                        context.pop();
+                        context.safePop();
                         widget.onDismiss?.call(_dismissPopupForToday);
                       },
                       child: Padding(

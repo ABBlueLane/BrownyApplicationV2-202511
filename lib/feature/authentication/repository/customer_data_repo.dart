@@ -198,7 +198,14 @@ class CustomerDataRepo extends OTPDataRepo with CustomerDataSourceMixin {
         if (localProfileResult.hasError) {
           return RepoResult.error(error: localProfileResult.error);
         }
-        mId = localProfileResult.data.id!;
+
+        // ข้อมูล cache เก่าอาจไม่มี id (schema เปลี่ยน/ข้อมูลไม่สมบูรณ์)
+        // ถ้าไม่มี id ให้ถือว่าไม่มี profile ที่ใช้ต่อได้ แทนที่จะ crash ด้วย !
+        final localId = localProfileResult.data.id;
+        if (localId == null || localId.isEmpty) {
+          return RepoResult.empty();
+        }
+        mId = localId;
       }
 
       final response = await requireRemote.fetchCustomerProfile(
@@ -206,42 +213,48 @@ class CustomerDataRepo extends OTPDataRepo with CustomerDataSourceMixin {
       );
       if (response.isSuccessful) {
         profileResult = response.data;
-        var profile = profileResult!.data;
 
-        try {
-          // ถ้า fetch profile ได้ จะ fetch coin มาด้วย
-          final creditData = await fetchCustomerCredit(mId);
+        // response.data ประกาศเป็น nullable (CustomerProfileResponse?) เอง
+        // HTTP 2xx ไม่ได้แปลว่า body แปลงเป็น object สำเร็จเสมอไป (เช่น
+        // gateway ตอบ 200 แต่ body ว่าง/พัง) ต้องเช็ค null ก่อนใช้งานจริง
+        if (profileResult != null) {
+          var profile = profileResult.data;
 
-          if (creditData.isSuccess) {
-            profile = profile.copyWith(
-              creditBalance: creditData.data.creditBalance,
-              brownyCoin: creditData.data.brownyCoin,
-              coinValue: creditData.data.coinValue,
-              currentCoin: creditData.data.currentCoin,
-            );
+          try {
+            // ถ้า fetch profile ได้ จะ fetch coin มาด้วย
+            final creditData = await fetchCustomerCredit(mId);
 
-            profileResult = profileResult.copyWith(
-              data: profile,
-            );
+            if (creditData.isSuccess) {
+              profile = profile.copyWith(
+                creditBalance: creditData.data.creditBalance,
+                brownyCoin: creditData.data.brownyCoin,
+                coinValue: creditData.data.coinValue,
+                currentCoin: creditData.data.currentCoin,
+              );
+
+              profileResult = profileResult.copyWith(
+                data: profile,
+              );
+            }
+
+            // fetch coupon available count
+            final couponCountData = await fetchCouponAvailableCount(mId);
+
+            if (couponCountData.isSuccess) {
+              profile = profile.copyWith(
+                couponsRedemption: couponCountData.data.coupons?.redemption,
+                couponsDiscount: couponCountData.data.coupons?.discount,
+                couponsEVoucher: couponCountData.data.coupons?.eVoucher,
+                totalCoupons: couponCountData.data.total,
+              );
+
+              profileResult = profileResult.copyWith(
+                data: profile,
+              );
+            }
+          } finally {
+            saveLocalProfile(profile);
           }
-
-          // fetch coupon available count
-          final couponCountData = await fetchCouponAvailableCount(mId);
-
-          if (couponCountData.isSuccess) {
-            profile = profile.copyWith(
-              couponsRedemption: couponCountData.data.coupons?.redemption,
-              couponsDiscount: couponCountData.data.coupons?.discount,
-              couponsEVoucher: couponCountData.data.coupons?.eVoucher,
-              totalCoupons: couponCountData.data.total,
-            );
-
-            profileResult = profileResult.copyWith(
-              data: profile,
-            );
-          }
-        } finally {
-          saveLocalProfile(profile);
         }
       }
 

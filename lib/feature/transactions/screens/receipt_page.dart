@@ -251,7 +251,7 @@ class _ReceiptWidgetState extends State<ReceiptWidget> {
         leading: widget.viewmodel.isFromHistory
             ? BackButton(
                 color: AppColors.textPrimary,
-                onPressed: () => context.pop(),
+                onPressed: () => context.safePop(),
               )
             : null,
         title: AppText(

@@ -113,7 +113,7 @@ class _AvailablePaymentMethodPageState
                           // ยืนยันการเลือก payment method
                           widget._viewmodel.confirmPaymentMethodEdit();
                           // Pop กลับไป transaction_selected_page
-                          context.pop();
+                          context.safePop();
                         }
                       : null,
                   // เลือก

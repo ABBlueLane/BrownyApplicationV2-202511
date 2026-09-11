@@ -116,7 +116,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         leading: !widget.isFirstSignup
             ? TextButton.icon(
                 onPressed: () {
-                  context.pop();
+                  context.safePop();
                 },
                 icon: Icon(
                   Icons.arrow_back_ios_new,
@@ -156,7 +156,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   title: context.wording.somethingWrong,
                   error: profile.error,
                   onConfirm: () {
-                    context.pop();
+                    context.safePop();
                   },
                 );
                 return SizedBox();
@@ -650,7 +650,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         if (phone.orEmpty.isEmpty ||
                             _viewModel.isValidPhoneThai(phone)) {
                           _viewModel.onPhoneUpdate(phone);
-                          dialogContext.pop();
+                          dialogContext.safePop();
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -939,7 +939,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
-                        onTap: () => dialogContext.pop(),
+                        onTap: () => dialogContext.safePop(),
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
                           child: Assets.svg.icClosePopup.svg(
@@ -1042,7 +1042,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
 
                                     ElevatedButton(
                                       onPressed: () {
-                                        dialogContext.pop();
+                                        dialogContext.safePop();
                                       },
                                       child: AppText(
                                         context.wording.acknowledge,
@@ -1053,7 +1053,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                       ElevatedButton(
                                         onPressed: () {
                                           _birthDatefocusNode.requestFocus();
-                                          dialogContext.pop();
+                                          dialogContext.safePop();
                                           _onbirthDateFieldTap();
                                         },
                                         style: ElevatedButton.styleFrom(

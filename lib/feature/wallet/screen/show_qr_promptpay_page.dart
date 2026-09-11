@@ -257,7 +257,7 @@ class _ShowQRPromptpayPageState extends State<ShowQRPromptpayPage>
           cancelText: context.wording.cancel,
           onConfirm: () {
             if (context.canPop()) {
-              context.pop();
+              context.safePop();
             } else {
               context.goNamed(WalletPage.pageName);
             }
@@ -300,7 +300,7 @@ class _ShowQRPromptpayPageState extends State<ShowQRPromptpayPage>
                       cancelText: context.wording.cancel,
                       onConfirm: () {
                         if (context.canPop()) {
-                          context.pop();
+                          context.safePop();
                         } else {
                           context.goNamed(WalletPage.pageName);
                         }

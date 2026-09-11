@@ -139,7 +139,7 @@ class __ScannerWidgetState extends State<_ScannerWidget>
                         horizontal: AppDims.size_16.w,
                       ),
                       child: ElevatedButton(
-                        onPressed: () => context.pop(),
+                        onPressed: () => context.safePop(),
                         child: AppText(context.wording.backToHome),
                       ),
                     ),

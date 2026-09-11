@@ -11,7 +11,6 @@ import 'package:browny_applications_new/feature/authentication/viewmodel/pin_bio
 import 'package:browny_applications_new/feature/profile/screen/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 /// หน้าตั้งค่าเปิดใช้งาน Biometric
@@ -100,7 +99,7 @@ class _BiometricContentState extends State<_BiometricContent> {
             //   },
             // );
           } else {
-            context.pop();
+            context.safePop();
           }
         }
       } else {
@@ -131,7 +130,7 @@ class _BiometricContentState extends State<_BiometricContent> {
     if (widget.isFirstSignup) {
       context.pushNamedAndClear(ProfilePage.pageName);
     } else {
-      context.pop();
+      context.safePop();
     }
   }
 

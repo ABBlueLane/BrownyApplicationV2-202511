@@ -21,7 +21,7 @@ class StoreBottomSheetDialog extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: IconButton(
-                onPressed: () => context.pop(),
+                onPressed: () => context.safePop(),
                 icon: CircleAvatar(
                   backgroundColor: AppColors.background.withValues(
                     alpha: 0.5,

@@ -23,7 +23,7 @@ class InvitBottomSheetDialog extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: IconButton(
-              onPressed: () => context.pop(),
+              onPressed: () => context.safePop(),
               icon: CircleAvatar(
                 backgroundColor: AppColors.background.withValues(
                   alpha: 0.5,
@@ -81,7 +81,7 @@ class InvitBottomSheetDialog extends StatelessWidget {
 
                           ElevatedButton(
                             onPressed: () {
-                              context.pop();
+                              context.safePop();
                               context
                                   .pushNamed<Map<Type, HomePageState>>(
                                     InvitFriendPage.pageName,
@@ -126,7 +126,7 @@ class InvitBottomSheetDialog extends StatelessWidget {
                           ),
                           AppDims.vericalPadding_8,
                           ElevatedButton(
-                            onPressed: () => context.pop(),
+                            onPressed: () => context.safePop(),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.ci3,
                               foregroundColor: AppColors.primary,

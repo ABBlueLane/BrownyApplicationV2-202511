@@ -185,7 +185,7 @@ class _CouponVoucherWidgetState extends State<_CouponVoucherWidget>
           ),
           child: ElevatedButton(
             onPressed: () {
-              context.pop();
+              context.safePop();
             },
             // ดำเนินการต่อโดยไม่ใช้คูปอง
             child: AppText(context.wording.continueWithoutCoupon),
@@ -223,7 +223,7 @@ class _CouponVoucherWidgetState extends State<_CouponVoucherWidget>
               ),
               leading: BackButton(
                 onPressed: () {
-                  context.pop(
+                  context.safePop(
                     // _viewmodel.customerCouponModelSelected,
                     true,
                   );
@@ -1143,7 +1143,7 @@ class _CustomerWashDryCouponWidgetState
           widget._viewModel.onCustomerDiscountSelected(
             customerDiscount,
           );
-          context.pop(
+          context.safePop(
             widget._viewModel.customerCouponModelSelected,
           );
           break;
@@ -1674,7 +1674,7 @@ class _CustomerEVoucherWidgetState extends State<_CustomerEVoucherWidget> {
           widget._viewModel.onCustomerEVoucherSelected(
             customerEVoucher,
           );
-          context.pop(
+          context.safePop(
             widget._viewModel.customerCouponModelSelected,
           );
           break;

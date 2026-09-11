@@ -83,7 +83,7 @@ class __ContactContentState extends State<_ContactContent> {
         ),
         leading: BackButton(
           color: AppColors.textWhite,
-          onPressed: () => context.pop(),
+          onPressed: () => context.safePop(),
         ),
       ),
       body: SingleChildScrollView(

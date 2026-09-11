@@ -189,7 +189,7 @@ class AuthenticationViewModel extends AppViewModelFormFieldValidation {
           return;
         case AuthenProcess.changePassword:
           if (context.canPop()) {
-            context.pop();
+            context.safePop();
           }
           return;
         case AuthenProcess.changePasswordOTP:

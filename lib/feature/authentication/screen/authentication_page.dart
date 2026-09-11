@@ -240,7 +240,7 @@ class _AuthenticationWidgetState extends State<_AuthenticationWidget> {
                 } else {
                   // กรณีเป็นหน้าแรก → ออกจากหน้านี้
                   if (context.canPop()) {
-                    context.pop();
+                    context.safePop();
                   }
                 }
               },
@@ -2378,7 +2378,7 @@ class _ChangePasswordNewPasswordWidget extends _SignUpWidget {
                             message:
                                 context.wording.passwordChangedSuccessfully,
                             onConfirm: () {
-                              context.pop();
+                              context.safePop();
                             },
                           );
                         });

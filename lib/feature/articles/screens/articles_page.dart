@@ -74,7 +74,7 @@ class _ArticlesPageState extends State<ArticlesPage> {
         ),
         leading: BackButton(
           color: AppColors.textWhite,
-          onPressed: () => context.pop(),
+          onPressed: () => context.safePop(),
         ),
       ),
       body: CustomScrollView(

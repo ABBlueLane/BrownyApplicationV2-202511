@@ -334,7 +334,7 @@ class _MapContentState extends State<MapContent> {
                             shape: BoxShape.circle,
                           ),
                           child: IconButton.filled(
-                            onPressed: () => context.pop(),
+                            onPressed: () => context.safePop(),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.background,
                               shape: CircleBorder(),

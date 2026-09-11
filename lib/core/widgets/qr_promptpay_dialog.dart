@@ -199,7 +199,7 @@ class _QrPromptpayDialogState extends State<QrPromptpayDialog>
           confirmText: context.wording.confirm,
           cancelText: context.wording.cancel,
           onConfirm: () {
-            context.pop();
+            context.safePop();
           },
         );
       },
@@ -220,7 +220,7 @@ class _QrPromptpayDialogState extends State<QrPromptpayDialog>
                     confirmText: context.wording.confirm,
                     cancelText: context.wording.cancel,
                     onConfirm: () {
-                      context.pop();
+                      context.safePop();
                     },
                   );
                 },

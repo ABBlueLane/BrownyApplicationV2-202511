@@ -80,7 +80,7 @@ class _PurchaseCouponVoucherPageState extends State<PurchaseCouponVoucherPage> {
             }
 
             if (context.canPop()) {
-              context.pop();
+              context.safePop();
             } else {
               HomePage.goToPage(context);
             }

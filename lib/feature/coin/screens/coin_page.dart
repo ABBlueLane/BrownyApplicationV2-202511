@@ -384,7 +384,7 @@ class __CoinContentState extends State<_CoinContent> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
-                        onTap: () => dialogContext.pop(),
+                        onTap: () => dialogContext.safePop(),
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
                           child: Assets.svg.icClosePopup.svg(
@@ -483,7 +483,7 @@ class __CoinContentState extends State<_CoinContent> {
 
                                     ElevatedButton(
                                       onPressed: () {
-                                        dialogContext.pop();
+                                        dialogContext.safePop();
                                       },
                                       child: AppText(
                                         context.wording.acknowledge,

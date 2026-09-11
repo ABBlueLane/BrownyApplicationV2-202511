@@ -76,7 +76,7 @@ class _LuckyMockupContentState extends State<LuckyMockupContent>
       AppOverlays.showBrownyDialog(
         context,
         message: context.wording.errorOccurred,
-        onConfirm: () => context.pop(),
+        onConfirm: () => context.safePop(),
       );
       return;
     }
@@ -88,7 +88,7 @@ class _LuckyMockupContentState extends State<LuckyMockupContent>
         title: context.wording.noLuckyScanActivityTitle,
         message: context.wording.noLuckyScanActivityMessage,
         confirmText: context.wording.backToHome,
-        onConfirm: () => context.pop(),
+        onConfirm: () => context.safePop(),
       );
     }
   }
@@ -141,7 +141,7 @@ class _LuckyMockupContentState extends State<LuckyMockupContent>
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  onPressed: () => context.pop(),
+                  onPressed: () => context.safePop(),
                   child: Row(
                     spacing: AppDims.size_4.w,
                     children: [
@@ -587,7 +587,7 @@ class _LuckyMockupContentState extends State<LuckyMockupContent>
                     Align(
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
-                        onTap: () => dialogContext.pop(),
+                        onTap: () => dialogContext.safePop(),
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
                           child: Assets.svg.icClosePopup.svg(
@@ -647,7 +647,7 @@ class _LuckyMockupContentState extends State<LuckyMockupContent>
 
                                     ElevatedButton(
                                       onPressed: () {
-                                        dialogContext.pop();
+                                        dialogContext.safePop();
                                       },
                                       child: AppText(
                                         context.wording.acknowledge,

@@ -102,7 +102,7 @@ class _LuckyScanContentState extends State<LuckyScanContent>
       AppOverlays.showBrownyDialog(
         context,
         message: context.wording.errorOccurred,
-        onConfirm: () => context.pop(),
+        onConfirm: () => context.safePop(),
       );
       return;
     }
@@ -117,7 +117,7 @@ class _LuckyScanContentState extends State<LuckyScanContent>
         message: context.wording.noLuckyScanActivityMessage,
         // กลับสู่หน้าหลัก
         confirmText: context.wording.backToHome,
-        onConfirm: () => context.pop(),
+        onConfirm: () => context.safePop(),
       );
     }
   }
@@ -202,7 +202,7 @@ class _LuckyScanContentState extends State<LuckyScanContent>
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  onPressed: () => context.pop(),
+                  onPressed: () => context.safePop(),
                   child: Row(
                     spacing: AppDims.size_4.w,
                     children: [
@@ -830,7 +830,7 @@ class _LuckyScanContentState extends State<LuckyScanContent>
         ).getTextByLocale(context.languageCode),
         onConfirm: () {
           if (fromAuto && context.canPop()) {
-            context.pop();
+            context.safePop();
           }
         },
       );
@@ -872,7 +872,7 @@ class _LuckyScanContentState extends State<LuckyScanContent>
                     Align(
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
-                        onTap: () => dialogContext.pop(),
+                        onTap: () => dialogContext.safePop(),
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
                           child: Assets.svg.icClosePopup.svg(
@@ -986,12 +986,12 @@ class _LuckyScanContentState extends State<LuckyScanContent>
 
                                     ElevatedButton(
                                       onPressed: () {
-                                        dialogContext.pop();
+                                        dialogContext.safePop();
                                         // ชนะ lucky draw
                                         // และมาจาก scan หน้า home
                                         // จะ popup กลับหน้าหลัก
                                         if (fromAuto && context.canPop()) {
-                                          context.pop();
+                                          context.safePop();
                                         }
                                       },
                                       child: AppText(
