@@ -606,5 +606,8 @@
   "unavailableCoupons": "Unavailable Coupons",
   "unavailableEVouchers": "Unavailable E-Vouchers",
   "couponExpired": "Expired",
-  "couponFullyRedeemed": "Fully Redeemed"
+  "couponFullyRedeemed": "Fully Redeemed",
+  "paymentMethodNotAllowedForCoupon": "Not available with the selected coupon",
+  "paymentMethodUnavailable": "Currently unavailable",
+  "noPaymentMethodForCoupon": "No payment method supports this coupon. Choose another coupon or remove it."
 }

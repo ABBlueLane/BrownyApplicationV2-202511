@@ -1608,4 +1608,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get couponFullyRedeemed => '已满额';
+
+  @override
+  String get paymentMethodNotAllowedForCoupon => '所选优惠券不支持';
+
+  @override
+  String get paymentMethodUnavailable => '暂不可用';
+
+  @override
+  String get noPaymentMethodForCoupon => '没有支持此优惠券的付款方式，请更换或取消优惠券';
 }

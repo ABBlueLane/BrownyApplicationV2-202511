@@ -297,20 +297,9 @@ class MachineTransactionViewmodel extends TransactionsViewmodel {
     BuildContext context, {
     bool fetchAll = false,
   }) async {
-    final localed = context.languageCode;
-    // ดึง payment methods จาก /payment-methods API แล้ว cache ไว้
+    // ดึง payment methods จาก /payment-methods API แล้ว cache ไว้ (Payment Master)
     final paymentMethodsResult = await repoDelegate.fetchPaymentMethods();
     _cachedPaymentMethods = paymentMethodsResult.data.payments ?? [];
-
-    // ดึง payment methods กรองตาม cached methods
-    final listPayment = _machineProgramsNotifier.value.data!
-        .paymentMethodsAvailable(localed, _cachedPaymentMethods);
-
-    // ถ้าไม่มี payment method ให้เลือก
-    if (listPayment.isEmpty) {
-      _paymentMethodNotifier.value = UiResult.empty();
-      return;
-    }
 
     // Fetch ข้อมูล profile เพื่ออัพเดท credit balance (สำหรับ TP Wallet)
     final profileResult = await repoDelegate.fetchProfile('');
@@ -325,52 +314,64 @@ class MachineTransactionViewmodel extends TransactionsViewmodel {
     // อัพเดทข้อมูล user ใหม่ใน provider
     currentCustomerProvider.newUser = userModel;
 
+    if (!context.mounted) return;
+    _rebuildPaymentMethods(context, fetchAll: fetchAll);
+  }
+
+  /// ประกอบรายการช่องทางชำระใหม่จาก cache ที่มีอยู่ โดยไม่ยิง API ซ้ำ
+  ///
+  /// เรียกทุกครั้งที่สิทธิ์อาจเปลี่ยน เช่น หลังเลือก/ยกเลิก Coupon, E-Voucher
+  /// เพราะ [MachineProgramModel.paymentMethodsAvailable] คำนวณ isActive จาก
+  /// flag ของเครื่อง + allowed_payment_methods ของคูปองที่เลือกอยู่
+  void _rebuildPaymentMethods(
+    BuildContext context, {
+    bool fetchAll = false,
+  }) {
+    if (!_machineProgramsNotifier.value.isSuccess) return;
+
+    // ดึง payment methods กรองตาม cached methods
+    final listPayment = _machineProgramsNotifier.value.data!
+        .paymentMethodsAvailable(context.languageCode, _cachedPaymentMethods);
+
     // Copy list เพื่อไม่ให้กระทบ original
     var finalList = listPayment.toList();
 
-    // ถ้ามีการเลือก payment ไว้แล้วก่อนหน้านี้
-    if (_paymentSelected != null) {
-      // หาตำแหน่งของ payment ที่เลือกไว้
-      final selectedIndex = finalList.indexWhere(
-        (e) => e.method == _paymentSelected!.method,
-      );
+    // ถ้าไม่มี payment method ให้เลือก
+    if (finalList.isEmpty) {
+      _paymentSelected = null;
+      _paymentMethodNotifier.value = UiResult.empty();
+      return;
+    }
 
-      if (selectedIndex != -1) {
-        // Mark ทั้งหมดเป็น unselected ก่อน
-        finalList = finalList
-            .map((e) => e.copyWith(isSelected: false))
-            .toList();
+    // หาตำแหน่งของ payment ที่เลือกไว้ — นับเฉพาะที่ยังใช้งานได้อยู่
+    final selectedIndex = _paymentSelected == null
+        ? -1
+        : finalList.indexWhere(
+            (e) => e.method == _paymentSelected!.method && e.isActive,
+          );
 
-        // เอาตัวที่เลือกออกจาก list
-        final selected = finalList.removeAt(selectedIndex);
+    if (selectedIndex != -1) {
+      // Mark ทั้งหมดเป็น unselected ก่อน
+      finalList = finalList.map((e) => e.copyWith(isSelected: false)).toList();
 
-        // ใส่กลับไปที่ index 0 และ mark เป็น selected
-        finalList.insert(0, selected.copyWith(isSelected: true));
-        // เอาตัวที่เลือก หรือ TPWallet ขึ้นด้านบน
-        // finalList.sort((l, r) {
-        //   if (l.isSelected) return 0;
-        //   if (l.isTpWallet) return 1;
-        //   if (l.isCoin) return 2;
-        //   return 3;
-        // });
-      }
+      // เอาตัวที่เลือกออกจาก list แล้วใส่กลับไปที่ index 0 พร้อม mark selected
+      final selected = finalList.removeAt(selectedIndex);
+      finalList.insert(0, selected.copyWith(isSelected: true));
+      _paymentSelected = finalList.first;
     } else {
-      // เอา TPWallet ขึ้นตัวแรกเสมอ
-      // finalList.sort((l, r) {
-      //   if (l.isTpWallet) return 0;
-      //   if (l.isCoin) return 1;
-      //   return 2;
-      // });
+      // ยังไม่เคยเลือก หรือช่องทางเดิมใช้ไม่ได้แล้ว
+      // → เลือกช่องทางที่ "ใช้งานได้" ตัวแรก (ไม่ใช่ index 0 เสมอไป)
+      final firstActiveIndex = finalList.indexWhere((e) => e.isActive);
+      finalList = finalList
+          .mapIndex(
+            (index, e) => e.copyWith(isSelected: index == firstActiveIndex),
+          )
+          .toList();
 
-      // ถ้ายังไม่เคยเลือก ให้เลือกตัวแรกเป็น default
-      finalList = finalList.asMap().entries.map((entry) {
-        // ตัวแรก (index 0) จะถูก mark เป็น selected
-        return entry.value.copyWith(isSelected: entry.key == 0);
-      }).toList();
-      // เก็บตัวแรกไว้ใน _paymentSelected
-      if (finalList.isNotEmpty) {
-        _paymentSelected = finalList.first;
-      }
+      // ถ้าไม่มีช่องทางที่ใช้ได้เลย จะไม่มีอะไรถูกเลือก
+      _paymentSelected = firstActiveIndex == -1
+          ? null
+          : finalList[firstActiveIndex];
     }
 
     // Update notifier พร้อมจำกัดจำนวนตามค่า fetchAll
@@ -385,39 +386,33 @@ class MachineTransactionViewmodel extends TransactionsViewmodel {
     PaymentMethodModel payment, {
     bool fetchAll = false,
   }) {
-    // ตรวจสอบว่า couponDetail พร้อมใช้งาน
+    // ตรวจสอบว่า machineProgram พร้อมใช้งาน
     if (!_machineProgramsNotifier.value.isSuccess) return;
 
-    // ดึง payment methods ทั้งหมดกรองตาม cached methods
-    final fullList = _machineProgramsNotifier.value.data!
-        .paymentMethodsAvailable(
-          context.languageCode,
-          _cachedPaymentMethods,
-        );
+    // ช่องทางที่ถูก disable (flag ปิด หรือคูปองไม่รองรับ) กดเลือกไม่ได้
+    if (!payment.isActive) return;
 
-    // Mark ทุกตัวเป็น unselected ก่อน
-    var newList = fullList.map((e) => e.copyWith(isSelected: false)).toList();
+    // เก็บค่าไว้ใน _paymentSelected แล้วให้ _rebuildPaymentMethods
+    // จัดลำดับ + mark selected ให้ เพื่อใช้ตรรกะชุดเดียวกันทุกที่
+    _paymentSelected = payment;
+    _rebuildPaymentMethods(context, fetchAll: fetchAll);
+  }
 
-    // หาตำแหน่งของ payment ที่เลือก
-    final selectedIndex = newList.indexWhere((e) => e.method == payment.method);
+  @override
+  String? paymentMethodDisabledReason(
+    BuildContext context,
+    PaymentMethodModel payment,
+  ) {
+    if (payment.isActive) return null;
 
-    if (selectedIndex != -1) {
-      // เอา payment ที่เลือกออกจาก list
-      final selected = newList.removeAt(selectedIndex);
-
-      // ใส่กลับไปที่ index 0 และ mark เป็น selected
-      newList.insert(0, selected.copyWith(isSelected: true));
-
-      // เก็บค่าไว้ใน _paymentSelected เพื่อใช้ตอน fetch ครั้งถัดไป
-      _paymentSelected = newList.first;
+    // แยกเหตุผลว่าปิดเพราะคูปองที่เลือก หรือเพราะเครื่องไม่เปิดให้บริการ
+    final program = _machineProgramsNotifier.value.data;
+    if (program != null &&
+        program.hasSelectedCoupon &&
+        !program.isPaymentMethodAllowedByCoupon(payment.method)) {
+      return context.wording.paymentMethodNotAllowedForCoupon;
     }
-
-    // Update notifier พร้อมจำกัดจำนวนตาม fetchAll
-    // fetchAll = true: ส่งทั้งหมด (ใช้ใน available_payment_method_page)
-    // fetchAll = false: ส่งแค่ 3 ตัว (ใช้ใน transaction_selected_page)
-    _paymentMethodNotifier.value = UiResult.success(
-      data: newList.take(fetchAll ? newList.length : 3).toList(),
-    );
+    return context.wording.paymentMethodUnavailable;
   }
 
   /// เลือก Program จาก List programs ตาม index
@@ -479,6 +474,8 @@ class MachineTransactionViewmodel extends TransactionsViewmodel {
     if (customerCoupon == null) {
       final updatedModel = currentModel.clearSelectedCoupon();
       _machineProgramsNotifier.value = UiResult.success(data: updatedModel);
+      // สิทธิ์ช่องทางชำระเปลี่ยนตามคูปอง — คำนวณใหม่หลังอัพเดท notifier แล้ว
+      if (context.mounted) _rebuildPaymentMethods(context);
       return;
     }
 
@@ -518,16 +515,35 @@ ${customerCoupon.getSelectedTypeNoDetailWordingDisplay(context)} ${customerCoupo
           ); // ถ้ากดตัวใหม่ ให้เลือกตัวนั้น
 
     _machineProgramsNotifier.value = UiResult.success(data: updatedModel);
+
+    // สิทธิ์ช่องทางชำระเปลี่ยนตามคูปอง — คำนวณใหม่หลังอัพเดท notifier แล้ว
+    if (context.mounted) _rebuildPaymentMethods(context);
   }
 
   @override
   Future<UiResult<double>> verifyOrder() async {
     try {
+      // ตรวจสอบว่าช่องทางชำระที่เลือกยังใช้งานได้อยู่หรือไม่
+      // (flag ของเครื่อง + allowed_payment_methods ของคูปองที่เลือก)
+      final program = _machineProgramsNotifier.value.data;
+      if (_paymentSelected == null ||
+          program == null ||
+          !program.isPaymentMethodActive(_paymentSelected!.method)) {
+        return UiResult.error(
+          error: Unprocessable(
+            program?.hasSelectedCoupon == true
+                ? context.wording.noPaymentMethodForCoupon
+                : context.wording.selectPaymentMethodRequired,
+          ),
+        );
+      }
+
       if (kDebugMode && paymentSelected?.isCoin == true) {
         return UiResult.success(
           data: _machineProgramsNotifier.value.data!.getNetPrice(),
         );
       }
+
       if (paymentSelected?.isTpWallet == true ||
           paymentSelected?.isCoin == true) {
         final result = await _couponRepo.fetchCustomerCredit(
@@ -601,6 +617,11 @@ ${customerCoupon.getSelectedTypeNoDetailWordingDisplay(context)} ${customerCoupo
     }
 
     final programData = _machineProgramsNotifier.value.data!;
+
+    // ตรวจสอบว่าช่องทางชำระที่เลือกยังใช้งานได้อยู่หรือไม่ (ด่านสุดท้ายก่อนยิง API)
+    if (!programData.isPaymentMethodActive(_paymentSelected!.method)) {
+      return UiResult.empty();
+    }
 
     // ตรวจสอบว่ามี selectedProgram หรือไม่
     if (programData.selectedProgram == null) {

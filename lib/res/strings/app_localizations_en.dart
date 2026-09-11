@@ -1657,4 +1657,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get couponFullyRedeemed => 'Fully Redeemed';
+
+  @override
+  String get paymentMethodNotAllowedForCoupon =>
+      'Not available with the selected coupon';
+
+  @override
+  String get paymentMethodUnavailable => 'Currently unavailable';
+
+  @override
+  String get noPaymentMethodForCoupon =>
+      'No payment method supports this coupon. Choose another coupon or remove it.';
 }

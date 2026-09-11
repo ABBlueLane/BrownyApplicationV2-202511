@@ -11,6 +11,7 @@ MachineProgramsResponse _$MachineProgramsResponseFromJson(
 ) => MachineProgramsResponse(
   machineId: (json['machine_id'] as num?)?.toInt(),
   machineNo: (json['machine_no'] as num?)?.toInt(),
+  capacityKg: (json['capacity_kg'] as num?)?.toInt(),
   machineName: json['machine_name'] == null
       ? null
       : ContentLocalizeData.fromJson(
@@ -49,6 +50,7 @@ Map<String, dynamic> _$MachineProgramsResponseToJson(
 ) => <String, dynamic>{
   'machine_id': instance.machineId,
   'machine_no': instance.machineNo,
+  'capacity_kg': instance.capacityKg,
   'machine_name': instance.machineName,
   'machine_type': instance.machineType,
   'firebase_ref': instance.firebaseRef,
@@ -142,6 +144,22 @@ AvailableCouponData _$AvailableCouponDataFromJson(Map<String, dynamic> json) =>
       min: json['min'] as String?,
       quantity: (json['quantity'] as num?)?.toInt(),
       remaining: (json['remaining'] as num?)?.toInt(),
+      remainingTotal: (json['remaining_total'] as num?)?.toInt(),
+      remainingShared: (json['remaining_shared'] as num?)?.toInt(),
+      remainingWasher: (json['remaining_washer'] as num?)?.toInt(),
+      remainingDryer: (json['remaining_dryer'] as num?)?.toInt(),
+      appliesTo: json['applies_to'] as String?,
+      allowedPaymentMethods: (json['allowed_payment_methods'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      allStores: json['all_stores'] as bool?,
+      storeId: (json['store_id'] as num?)?.toInt(),
+      storeIds: (json['store_ids'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
+      excludedStoreIds: (json['excluded_store_ids'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
     );
 
 Map<String, dynamic> _$AvailableCouponDataToJson(
@@ -163,4 +181,14 @@ Map<String, dynamic> _$AvailableCouponDataToJson(
   'min': instance.min,
   'quantity': instance.quantity,
   'remaining': instance.remaining,
+  'remaining_total': instance.remainingTotal,
+  'remaining_shared': instance.remainingShared,
+  'remaining_washer': instance.remainingWasher,
+  'remaining_dryer': instance.remainingDryer,
+  'applies_to': instance.appliesTo,
+  'allowed_payment_methods': instance.allowedPaymentMethods,
+  'all_stores': instance.allStores,
+  'store_id': instance.storeId,
+  'store_ids': instance.storeIds,
+  'excluded_store_ids': instance.excludedStoreIds,
 };

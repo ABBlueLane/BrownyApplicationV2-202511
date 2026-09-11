@@ -14,6 +14,7 @@ class MachineProgramsResponse {
   MachineProgramsResponse({
     this.machineId,
     this.machineNo,
+    this.capacityKg,
     this.machineName,
     this.machineType,
     this.firebaseRef,
@@ -30,6 +31,9 @@ class MachineProgramsResponse {
 
   @JsonKey(name: 'machine_no')
   final int? machineNo;
+
+  @JsonKey(name: 'capacity_kg')
+  final int? capacityKg;
 
   @JsonKey(name: 'machine_name')
   final ContentLocalizeData? machineName;
@@ -221,6 +225,16 @@ class AvailableCouponData {
     this.min,
     this.quantity,
     this.remaining,
+    this.remainingTotal,
+    this.remainingShared,
+    this.remainingWasher,
+    this.remainingDryer,
+    this.appliesTo,
+    this.allowedPaymentMethods,
+    this.allStores,
+    this.storeId,
+    this.storeIds,
+    this.excludedStoreIds,
   });
 
   @JsonKey(name: 'id')
@@ -270,6 +284,36 @@ class AvailableCouponData {
 
   @JsonKey(name: 'remaining')
   final int? remaining;
+
+  @JsonKey(name: 'remaining_total')
+  final int? remainingTotal;
+
+  @JsonKey(name: 'remaining_shared')
+  final int? remainingShared;
+
+  @JsonKey(name: 'remaining_washer')
+  final int? remainingWasher;
+
+  @JsonKey(name: 'remaining_dryer')
+  final int? remainingDryer;
+
+  @JsonKey(name: 'applies_to')
+  final String? appliesTo;
+
+  @JsonKey(name: 'allowed_payment_methods')
+  final List<String>? allowedPaymentMethods;
+
+  @JsonKey(name: 'all_stores')
+  final bool? allStores;
+
+  @JsonKey(name: 'store_id')
+  final int? storeId;
+
+  @JsonKey(name: 'store_ids')
+  final List<int>? storeIds;
+
+  @JsonKey(name: 'excluded_store_ids')
+  final List<int>? excludedStoreIds;
 
   double get minValue =>
       double.tryParse(min.orEmpty.replaceAll(',', ',').ifEmpty('0.0')) ?? 0.0;

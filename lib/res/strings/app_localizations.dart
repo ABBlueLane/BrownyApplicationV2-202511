@@ -3255,6 +3255,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fully Redeemed'**
   String get couponFullyRedeemed;
+
+  /// No description provided for @paymentMethodNotAllowedForCoupon.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available with the selected coupon'**
+  String get paymentMethodNotAllowedForCoupon;
+
+  /// No description provided for @paymentMethodUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently unavailable'**
+  String get paymentMethodUnavailable;
+
+  /// No description provided for @noPaymentMethodForCoupon.
+  ///
+  /// In en, this message translates to:
+  /// **'No payment method supports this coupon. Choose another coupon or remove it.'**
+  String get noPaymentMethodForCoupon;
 }
 
 class _AppLocalizationsDelegate

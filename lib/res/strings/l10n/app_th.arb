@@ -557,5 +557,8 @@
   "unavailableCoupons": "คูปองที่ใช้ไม่ได้",
   "unavailableEVouchers": "E-Voucher ที่ใช้ไม่ได้",
   "couponExpired": "หมดอายุ",
-  "couponFullyRedeemed": "สิทธิ์เต็ม"
+  "couponFullyRedeemed": "สิทธิ์เต็ม",
+  "paymentMethodNotAllowedForCoupon": "ใช้กับคูปองที่เลือกไม่ได้",
+  "paymentMethodUnavailable": "ไม่พร้อมให้บริการ",
+  "noPaymentMethodForCoupon": "ไม่มีช่องทางชำระที่ใช้กับคูปองนี้ได้ กรุณาเปลี่ยนคูปองหรือยกเลิกการใช้คูปอง"
 }

@@ -23,8 +23,12 @@ CouponPackageData _$CouponPackageDataFromJson(Map<String, dynamic> json) =>
     CouponPackageData(
       packageId: (json['package_id'] as num?)?.toInt(),
       couponId: (json['coupon_id'] as num?)?.toInt(),
+      allowedPaymentMethods: (json['allowed_payment_methods'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       storeId: (json['store_id'] as num?)?.toInt(),
       quantityPerPackage: json['quantity_per_package'] as String?,
+      qtyTotal: json['qty_total'] as String?,
       price: json['price'] as String?,
       normalPrice: json['normal_price'] as String?,
       discountPercent: json['discount_percent'] as String?,
@@ -32,6 +36,8 @@ CouponPackageData _$CouponPackageDataFromJson(Map<String, dynamic> json) =>
       saved: json['saved'] as String?,
       qtyWasher: json['qty_washer'] as String?,
       qtyDryer: json['qty_dryer'] as String?,
+      qtyShared: json['qty_shared'] as String?,
+      usageMode: json['usage_mode'] as String?,
       distanceMeters: json['distance_meters'] as String?,
       couponName: json['coupon_name'] == null
           ? null
@@ -71,8 +77,10 @@ Map<String, dynamic> _$CouponPackageDataToJson(CouponPackageData instance) =>
     <String, dynamic>{
       'package_id': instance.packageId,
       'coupon_id': instance.couponId,
+      'allowed_payment_methods': instance.allowedPaymentMethods,
       'store_id': instance.storeId,
       'quantity_per_package': instance.quantityPerPackage,
+      'qty_total': instance.qtyTotal,
       'price': instance.price,
       'normal_price': instance.normalPrice,
       'discount_percent': instance.discountPercent,
@@ -80,6 +88,8 @@ Map<String, dynamic> _$CouponPackageDataToJson(CouponPackageData instance) =>
       'saved': instance.saved,
       'qty_washer': instance.qtyWasher,
       'qty_dryer': instance.qtyDryer,
+      'qty_shared': instance.qtyShared,
+      'usage_mode': instance.usageMode,
       'distance_meters': instance.distanceMeters,
       'coupon_name': instance.couponName,
       'coupon_image': instance.couponImage,

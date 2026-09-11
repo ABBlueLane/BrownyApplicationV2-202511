@@ -376,6 +376,16 @@ class TransactionsViewmodel extends AppViewModel
     );
   }
 
+  /// ข้อความอธิบายว่าทำไมช่องทางชำระนี้ถึงเลือกไม่ได้
+  /// คืน null ถ้าช่องทางนี้เลือกได้ปกติ
+  String? paymentMethodDisabledReason(
+    BuildContext context,
+    PaymentMethodModel payment,
+  ) {
+    if (payment.isActive) return null;
+    return context.wording.paymentMethodUnavailable;
+  }
+
   /// Initialize location permission and fetch coupon packages
   Future<void> initializeLocationAndFetchCoupons() async {
     // Check location permission

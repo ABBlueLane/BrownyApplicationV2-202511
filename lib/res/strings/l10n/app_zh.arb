@@ -555,5 +555,8 @@
   "unavailableCoupons": "无法使用的优惠券",
   "unavailableEVouchers": "无法使用的电子券",
   "couponExpired": "已过期",
-  "couponFullyRedeemed": "已满额"
+  "couponFullyRedeemed": "已满额",
+  "paymentMethodNotAllowedForCoupon": "所选优惠券不支持",
+  "paymentMethodUnavailable": "暂不可用",
+  "noPaymentMethodForCoupon": "没有支持此优惠券的付款方式，请更换或取消优惠券"
 }

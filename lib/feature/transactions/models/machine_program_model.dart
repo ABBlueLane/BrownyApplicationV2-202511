@@ -9,6 +9,7 @@ class MachineProgramModel extends MachineProgramsResponse {
   MachineProgramModel({
     super.machineId,
     super.machineNo,
+    super.capacityKg,
     super.machineName,
     super.machineType,
     super.firebaseRef,
@@ -52,6 +53,7 @@ class MachineProgramModel extends MachineProgramsResponse {
     return MachineProgramModel(
       machineId: data.machineId,
       machineNo: data.machineNo,
+      capacityKg: data.capacityKg,
       machineName: data.machineName,
       machineType: data.machineType,
       firebaseRef: data.firebaseRef,
@@ -65,7 +67,14 @@ class MachineProgramModel extends MachineProgramsResponse {
     );
   }
 
-  String? validSelectedCouponAndMessageError(BuildContext context) {
+  /// ตรวจสอบว่า Coupon/E-Voucher ที่เลือกใช้งานได้หรือไม่ คืนข้อความ error ถ้าใช้ไม่ได้
+  ///
+  /// [availablePaymentMethods] — รายการช่องทางชำระที่คำนวณสิทธิ์แล้ว (จาก viewmodel)
+  /// ใช้ตรวจว่าคูปองใบนี้ยังมีช่องทางชำระให้ใช้อยู่หรือไม่ ถ้าไม่ส่งมาจะข้ามการตรวจข้อนี้
+  String? validSelectedCouponAndMessageError(
+    BuildContext context, {
+    List<PaymentMethodModel>? availablePaymentMethods,
+  }) {
     if (selectedCoupon == null) {
       return null;
     }
@@ -82,6 +91,12 @@ class MachineProgramModel extends MachineProgramsResponse {
       return context.wording.couponMinimumAmountRequired(
         formatCurrency(leadingSign: '฿', value: selectedCoupon!.minValue),
       );
+    }
+    // ตรวจสอบว่ายังมีช่องทางชำระที่ใช้กับคูปองใบนี้ได้อยู่หรือไม่
+    if (availablePaymentMethods != null &&
+        availablePaymentMethods.isNotEmpty &&
+        !hasAnyActivePaymentMethod(availablePaymentMethods)) {
+      return context.wording.noPaymentMethodForCoupon;
     }
     return null;
   }
@@ -129,32 +144,75 @@ class MachineProgramModel extends MachineProgramsResponse {
     }
   }
 
-  /// [methods] — รายการ payment methods จาก API /payment-methods
-  /// ใช้ PaymentMethodsData boolean flags เพื่อกรองว่า method ไหน active สำหรับเครื่องนี้
+  /// code ของช่องทางชำระที่ Coupon/E-Voucher ที่เลือกอนุญาต
+  /// normalize เป็นตัวพิมพ์เล็กและตัดช่องว่างแล้ว
+  List<String> get allowedPaymentMethodCodes =>
+      selectedCoupon?.allowedPaymentMethods
+          ?.map((e) => e.trim().toLowerCase())
+          .where((e) => e.isNotEmpty)
+          .toList() ??
+      const [];
+
+  /// เช็คว่า [code] ผ่านเงื่อนไขของ Coupon/E-Voucher ที่เลือกหรือไม่
+  ///
+  /// - ไม่ได้เลือกคูปอง → ผ่านทุกช่องทาง (ไม่มีการจำกัด)
+  /// - เลือกคูปองแล้วแต่ allowed_payment_methods เป็น null หรือว่าง
+  ///   → ไม่อนุญาตช่องทางใดเลย (backend ยืนยันว่าจะไม่ส่งค่าแบบนี้มา แต่ handle ไว้)
+  bool isPaymentMethodAllowedByCoupon(String code) {
+    if (selectedCoupon == null) return true;
+    final codes = allowedPaymentMethodCodes;
+    if (codes.isEmpty) return false;
+    return codes.contains(code.trim().toLowerCase());
+  }
+
+  /// เช็คว่า [code] เลือกมาชำระได้หรือไม่ ผ่าน 2 ชั้น
+  /// 1. flag เปิด/ปิดของเครื่องนี้ (payment_methods จาก API)
+  /// 2. ช่องทางที่ Coupon/E-Voucher ที่เลือกอนุญาต
+  bool isPaymentMethodActive(String code) =>
+      (paymentMethods?.isMethodActive(code) ?? true) &&
+      isPaymentMethodAllowedByCoupon(code);
+
+  /// เช็คว่ามีช่องทางชำระที่ใช้ได้อย่างน้อย 1 ช่องหรือไม่
+  bool hasAnyActivePaymentMethod(List<PaymentMethodModel> methods) =>
+      methods.any((e) => e.isActive);
+
+  /// [methods] — รายการ payment methods จาก API /payment-methods (Payment Master)
+  ///
+  /// คืน **ทุก** ช่องทางที่อยู่ใน Master เสมอ ห้ามกรองรายการทิ้ง
+  /// สถานะใช้ได้/ไม่ได้บอกผ่าน isActive อย่างเดียว
+  ///
+  /// เรียงช่องทางที่ใช้ได้ขึ้นก่อน ช่องที่ปิดอยู่ท้ายลิสต์เสมอ โดยคงลำดับของ
+  /// Master ภายในแต่ละกลุ่ม แล้ว mark ช่องทางที่ใช้ได้ตัวแรกเป็น isSelected
   List<PaymentMethodModel> paymentMethodsAvailable(
     String locale,
     List<PaymentMethodData> methods,
   ) {
     try {
-      return methods
-          .map((m) {
-            final code = m.code ?? '';
-            // final isActive = super.paymentMethods?.isMethodActive(code) ?? true;
-            return PaymentMethodModel(
-              method: code,
-              name: m.name ?? '',
-              imageUrl: m.image,
-              isSelected: false,
-              isActive: true,
-            );
-          })
-          .where((e) => e.isActive)
-          .toList()
-          .mapIndex((index, e) {
-            if (index == 0) return e.copyWith(isSelected: true);
-            return e;
-          })
-          .toList();
+      final mapped = methods.map((m) {
+        final code = m.code ?? '';
+        return PaymentMethodModel(
+          method: code,
+          name: m.name ?? '',
+          imageUrl: m.image,
+          isSelected: false,
+          isActive: isPaymentMethodActive(code),
+        );
+      }).toList();
+
+      final sorted = <PaymentMethodModel>[
+        ...mapped.where((e) => e.isActive),
+        ...mapped.where((e) => !e.isActive),
+      ];
+
+      final firstActiveIndex = sorted.indexWhere((e) => e.isActive);
+      if (firstActiveIndex == -1) {
+        return sorted;
+      }
+
+      return sorted.mapIndex((index, e) {
+        if (index == firstActiveIndex) return e.copyWith(isSelected: true);
+        return e;
+      }).toList();
     } catch (_) {
       return [];
     }
@@ -164,6 +222,7 @@ class MachineProgramModel extends MachineProgramsResponse {
   MachineProgramModel copyWith({
     int? machineId,
     int? machineNo,
+    int? capacityKg,
     ContentLocalizeData? machineName,
     ContentLocalizeData? machineType,
     String? firebaseRef,
@@ -184,6 +243,7 @@ class MachineProgramModel extends MachineProgramsResponse {
     return MachineProgramModel(
       machineId: machineId ?? this.machineId,
       machineNo: machineNo ?? this.machineNo,
+      capacityKg: capacityKg ?? this.capacityKg,
       machineName: machineName ?? this.machineName,
       machineType: machineType ?? this.machineType,
       firebaseRef: firebaseRef ?? this.firebaseRef,

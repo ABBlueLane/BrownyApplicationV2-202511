@@ -35,11 +35,17 @@ class CouponPackageData {
   @JsonKey(name: 'coupon_id')
   final int? couponId;
 
+  @JsonKey(name: 'allowed_payment_methods')
+  final List<String>? allowedPaymentMethods;
+
   @JsonKey(name: 'store_id')
   final int? storeId;
 
   @JsonKey(name: 'quantity_per_package')
   final String? quantityPerPackage;
+
+  @JsonKey(name: 'qty_total')
+  final String? qtyTotal;
 
   @JsonKey(name: 'price')
   final String? price;
@@ -61,6 +67,12 @@ class CouponPackageData {
 
   @JsonKey(name: 'qty_dryer')
   final String? qtyDryer;
+
+  @JsonKey(name: 'qty_shared')
+  final String? qtyShared;
+
+  @JsonKey(name: 'usage_mode')
+  final String? usageMode;
 
   @JsonKey(name: 'distance_meters')
   final String? distanceMeters;
@@ -92,8 +104,10 @@ class CouponPackageData {
   CouponPackageData({
     this.packageId,
     this.couponId,
+    this.allowedPaymentMethods,
     this.storeId,
     this.quantityPerPackage,
+    this.qtyTotal,
     this.price,
     this.normalPrice,
     this.discountPercent,
@@ -101,6 +115,8 @@ class CouponPackageData {
     this.saved,
     this.qtyWasher,
     this.qtyDryer,
+    this.qtyShared,
+    this.usageMode,
     this.distanceMeters,
     this.couponName,
     this.couponImage,

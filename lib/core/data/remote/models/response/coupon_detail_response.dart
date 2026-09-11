@@ -287,6 +287,9 @@ class PaymentMethodsData {
   @JsonKey(name: 'coin')
   final bool? coin;
 
+  @JsonKey(name: 'transfer')
+  final bool? transfer;
+
   PaymentMethodsData({
     this.qr,
     this.creditCard,
@@ -296,6 +299,7 @@ class PaymentMethodsData {
     this.rabbitLine,
     this.tpWallet,
     this.coin,
+    this.transfer,
   });
 
   /// ตรวจสอบว่า payment method ตาม [code] ถูก enable อยู่สำหรับ context นี้หรือไม่
@@ -320,6 +324,8 @@ class PaymentMethodsData {
         return tpWallet ?? false;
       case 'coin':
         return coin ?? false;
+      case 'transfer':
+        return transfer ?? false;
       default:
         return true;
     }

@@ -1646,4 +1646,14 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get couponFullyRedeemed => 'สิทธิ์เต็ม';
+
+  @override
+  String get paymentMethodNotAllowedForCoupon => 'ใช้กับคูปองที่เลือกไม่ได้';
+
+  @override
+  String get paymentMethodUnavailable => 'ไม่พร้อมให้บริการ';
+
+  @override
+  String get noPaymentMethodForCoupon =>
+      'ไม่มีช่องทางชำระที่ใช้กับคูปองนี้ได้ กรุณาเปลี่ยนคูปองหรือยกเลิกการใช้คูปอง';
 }

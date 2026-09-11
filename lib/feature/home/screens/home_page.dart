@@ -323,7 +323,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                     onTap: () async {
                       if (kDebugMode) {
                         final data = Uri.parse(
-                          'http://brownypay.com/wash/dry/1181',
+                          'http://brownypay.com/wash/dry/16',
                           // 'http://brownypay.com/wash/dry/1379',
                         );
                         if (data.pathSegments.isNotEmpty) {

@@ -50,3 +50,6 @@ macos/Podfile
 # graphify knowledge-graph outputs (generated; rebuild with /graphify lib)
 graphify-out/
 lib/graphify-out/
+
+# project docs (CR plans, AI context, internal notes) — kept local only
+/docs/

@@ -154,6 +154,7 @@ PaymentMethodsData _$PaymentMethodsDataFromJson(Map<String, dynamic> json) =>
       rabbitLine: json['rabbit_line'] as bool?,
       tpWallet: json['tp_wallet'] as bool?,
       coin: json['coin'] as bool?,
+      transfer: json['transfer'] as bool?,
     );
 
 Map<String, dynamic> _$PaymentMethodsDataToJson(PaymentMethodsData instance) =>
@@ -166,4 +167,5 @@ Map<String, dynamic> _$PaymentMethodsDataToJson(PaymentMethodsData instance) =>
       'rabbit_line': instance.rabbitLine,
       'tp_wallet': instance.tpWallet,
       'coin': instance.coin,
+      'transfer': instance.transfer,
     };
