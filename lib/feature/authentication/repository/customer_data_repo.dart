@@ -90,6 +90,9 @@ mixin CustomerDataSourceMixin {
 
 /// คลาสสำหรับจัดการรีโพซิทอรีการเข้าสู่ระบบ
 class CustomerDataRepo extends OTPDataRepo with CustomerDataSourceMixin {
+  // forward เหมือน OTPDataRepo - เปิดช่องให้ unit test inject fake dependency ได้
+  CustomerDataRepo({super.appClient, super.localStorage, super.secureStorage});
+
   @override
   Future<RepoResult<CustomerQRResponse>> fetchCustomerQR(String uuid) async {
     try {

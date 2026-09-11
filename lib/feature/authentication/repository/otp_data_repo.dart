@@ -15,6 +15,12 @@ mixin OTPDataSourceMixin {
 }
 
 class OTPDataRepo extends AppRepository with OTPDataSourceMixin {
+  // forward ให้ constructor ของ AppRepository เพื่อเปิดช่องให้ inject
+  // fake AppClient/AppLocalStorage ใน unit test ได้ (ค่า default เหมือนเดิมทุกจุด
+  // เพราะเป็น optional parameter ที่ AppRepository จัดการ fallback เป็น
+  // singleton จริงอยู่แล้วเมื่อไม่ส่งมา)
+  OTPDataRepo({super.appClient, super.localStorage, super.secureStorage});
+
   @override
   Future<RepoResult<RequestOTPResponse>> requestOTP(RequestOTP data) async {
     try {

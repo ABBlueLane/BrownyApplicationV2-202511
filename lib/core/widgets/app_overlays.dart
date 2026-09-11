@@ -176,6 +176,26 @@ class AppOverlays {
       overlayEntry.remove();
     }
 
+    // dialog นี้ลอยอยู่บน Overlay แยกจาก lifecycle ของหน้าที่เรียก (ไม่ใช่
+    // Navigator route จริง) ถ้าหน้าที่เรียกถูก pop/dispose ไปแล้วระหว่างที่
+    // dialog ยังค้างอยู่ (เช่น กดปุ่ม back ของระบบ) แล้ว onConfirm/onCancel
+    // ของผู้เรียกไปใช้ context เดิม (เช่น context.pop()) จะ throw
+    // "No GoRouter found in context" เพราะ context ไม่ mounted แล้ว
+    // (ดู Crashlytics: GoRouter.of จาก AppOverlays.showBrownyDialog)
+    void handleConfirm() {
+      if (context.mounted) {
+        onConfirm?.call();
+      }
+      dismiss(true);
+    }
+
+    void handleCancel() {
+      if (context.mounted) {
+        onCancel?.call();
+      }
+      dismiss(false);
+    }
+
     overlayEntry = OverlayEntry(
       builder: (context) => _BrownyDialog(
         title: title,
@@ -184,16 +204,8 @@ class AppOverlays {
         cancelText: cancelText,
         image: image,
         imageAsset: imageAsset ?? Assets.png.brownyError1.path,
-        onConfirm: () {
-          onConfirm?.call();
-          dismiss(true);
-        },
-        onCancel: cancelText != null
-            ? () {
-                onCancel?.call();
-                dismiss(false);
-              }
-            : null,
+        onConfirm: handleConfirm,
+        onCancel: cancelText != null ? handleCancel : null,
         onDismiss: barrierDismissible ? () => dismiss(null) : null,
       ),
     );
@@ -240,6 +252,23 @@ class AppOverlays {
       overlayEntry.remove();
     }
 
+    // เหตุผลเดียวกับใน showBrownyDialog ด้านบน: dialog ลอยอยู่บน Overlay
+    // แยกจาก lifecycle ของหน้าที่เรียก ต้องเช็ค context.mounted ก่อนเรียก
+    // callback ของผู้เรียกเสมอ ป้องกัน "No GoRouter found in context"
+    void handleConfirm() {
+      if (context.mounted) {
+        onConfirm?.call();
+      }
+      dismiss(true);
+    }
+
+    void handleCancel() {
+      if (context.mounted) {
+        onCancel?.call();
+      }
+      dismiss(false);
+    }
+
     overlayEntry = OverlayEntry(
       builder: (context) => _WalletDialog(
         title: title,
@@ -247,16 +276,8 @@ class AppOverlays {
         confirmText: confirmText ?? context.wording.acknowledge,
         cancelText: cancelText,
         image: image,
-        onConfirm: () {
-          onConfirm?.call();
-          dismiss(true);
-        },
-        onCancel: cancelText != null
-            ? () {
-                onCancel?.call();
-                dismiss(false);
-              }
-            : null,
+        onConfirm: handleConfirm,
+        onCancel: cancelText != null ? handleCancel : null,
         onDismiss: barrierDismissible ? () => dismiss(null) : null,
       ),
     );
