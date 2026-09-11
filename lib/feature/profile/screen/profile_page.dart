@@ -14,7 +14,9 @@ import 'package:browny_applications_new/core/utils/ui_result.dart';
 import 'package:browny_applications_new/core/widgets/app_overlays.dart';
 import 'package:browny_applications_new/core/widgets/app_text.dart';
 import 'package:browny_applications_new/core/widgets/locale_toggle_widget.dart';
+import 'package:browny_applications_new/feature/profile/screen/change_contact_page.dart';
 import 'package:browny_applications_new/feature/profile/repository/profile_repo.dart';
+import 'package:browny_applications_new/feature/profile/viewmodel/change_contact_viewmodel.dart';
 import 'package:browny_applications_new/feature/profile/viewmodel/profile_viewmodel.dart';
 import 'package:browny_applications_new/models/user_model.dart';
 import 'package:browny_applications_new/res/styles/app_text_style.dart';
@@ -205,7 +207,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Email Field
+            // Email Field — แก้ผ่าน OTP ถ้ามีอีเมลแล้ว; เพิ่มครั้งแรกได้ที่นี่
             AppText(
               context.wording.email,
               style: context.textTheme.labelLarge!.copyWith(
@@ -213,26 +215,55 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               ),
             ),
             SizedBox(height: AppDims.size_8.h),
-            AppTextFormField(
-              controller: _viewModel.emailController,
-              style: context.textTheme.labelLarge!.copyWith(
-                color: AppColors.textPrimary,
-              ),
-              decoration: InputDecoration(
-                hintText: 'Browny1234@gmail.com',
-                hintStyle: context.inputTextStyle.copyWith(
-                  color: AppColors.gray500,
-                ),
-                fillColor: AppColors.background,
-                prefixIcon: SizedBox.shrink(),
-              ),
-              keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value.orEmpty.isEmpty ||
-                    _viewModel.isValidEmail(value.orEmpty)) {
-                  return null;
-                }
-                return context.wording.pleaseEnterValidEmail;
+            Builder(
+              builder: (context) {
+                final hasEmail =
+                    _viewModel.emailController.text.trim().isNotEmpty;
+                return AppTextFormField(
+                  controller: _viewModel.emailController,
+                  readOnly: hasEmail,
+                  onTap: hasEmail
+                      ? () {
+                          ChangeContactPage.goToPage(
+                            context,
+                            field: ChangeContactField.email,
+                          );
+                        }
+                      : null,
+                  style: context.textTheme.labelLarge!.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Browny1234@gmail.com',
+                    hintStyle: context.inputTextStyle.copyWith(
+                      color: AppColors.gray500,
+                    ),
+                    fillColor: AppColors.background,
+                    prefixIcon: SizedBox.shrink(),
+                    suffixIcon: hasEmail
+                        ? IconButton(
+                            onPressed: () {
+                              ChangeContactPage.goToPage(
+                                context,
+                                field: ChangeContactField.email,
+                              );
+                            },
+                            icon: Assets.svg.icEdit.svg(
+                              height: AppDims.size_16.h,
+                              width: AppDims.size_14.w,
+                            ),
+                          )
+                        : null,
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value.orEmpty.isEmpty ||
+                        _viewModel.isValidEmail(value.orEmpty)) {
+                      return null;
+                    }
+                    return context.wording.pleaseEnterValidEmail;
+                  },
+                );
               },
             ),
             SizedBox(height: AppDims.size_16.h),
@@ -583,8 +614,10 @@ class _ProfileWidgetState extends State<ProfileWidget> {
 
         IconButton(
           onPressed: () async {
-            _viewModel.phoneController.text = data.phone.orEmpty;
-            await _showBottomSheetDialog(context);
+            await ChangeContactPage.goToPage(
+              context,
+              field: ChangeContactField.phone,
+            );
           },
           padding: EdgeInsets.zero,
           icon: Assets.svg.icEdit.svg(
@@ -593,89 +626,6 @@ class _ProfileWidgetState extends State<ProfileWidget> {
           ),
         ),
       ],
-    );
-  }
-
-  Future<void> _showBottomSheetDialog(BuildContext context) async {
-    return await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (dialogContext) {
-        return SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(dialogContext).viewInsets.bottom,
-            ),
-            width: double.infinity,
-            child: Padding(
-              padding: EdgeInsetsGeometry.all(
-                AppDims.size_16.h,
-              ),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    AppTextFormField(
-                      controller: _viewModel.phoneController,
-                      autofocus: true,
-                      keyboardType: TextInputType.phone,
-                      maxLength: 10,
-                      autovalidateMode: AutovalidateMode.always,
-                      validator: (value) {
-                        if (value.orEmpty.isEmpty ||
-                            _viewModel.isValidPhoneThai(
-                              value.orEmpty,
-                            )) {
-                          return null;
-                        }
-                        return dialogContext
-                            .wording
-                            .pleaseEnterValidEmailOrPhone;
-                      },
-
-                      decoration: InputDecoration(
-                        hint: AppText(
-                          context.wording.addPhoneNumber,
-                          style: DefaultTextStyle.of(context).style.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                        prefixIcon: SizedBox.shrink(),
-                        counterText: '',
-                      ),
-                    ),
-                    AppDims.vericalPadding_12,
-                    ElevatedButton(
-                      onPressed: () {
-                        final phone = _viewModel.phoneController.text;
-                        if (phone.orEmpty.isEmpty ||
-                            _viewModel.isValidPhoneThai(phone)) {
-                          _viewModel.onPhoneUpdate(phone);
-                          dialogContext.pop();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            AppDims.size_8.r,
-                          ),
-                        ),
-                      ),
-                      child: Text(
-                        context.wording.save,
-                        style: context.textTheme.bodyMedium!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 

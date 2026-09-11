@@ -1646,4 +1646,68 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get couponFullyRedeemed => 'สิทธิ์เต็ม';
+
+  @override
+  String get changePhone => 'เปลี่ยนเบอร์โทร';
+
+  @override
+  String get addEmail => 'เพิ่มอีเมล';
+
+  @override
+  String get currentContactLabel => 'ข้อมูลปัจจุบัน';
+
+  @override
+  String get currentContactNone => 'ยังไม่ได้ตั้งค่า';
+
+  @override
+  String get newEmailPlaceholder => 'อีเมลใหม่';
+
+  @override
+  String get emailPlaceholderAdd => 'อีเมล (ex001@browny.com)';
+
+  @override
+  String get newPhonePlaceholder => 'เบอร์โทรใหม่ (08xxxxxxxx)';
+
+  @override
+  String get phonePlaceholderAdd => 'เบอร์โทร (08xxxxxxxx)';
+
+  @override
+  String get sendOtp => 'ส่ง OTP';
+
+  @override
+  String get verifyOldContactOtp => 'ยืนยัน OTP ช่องทางเดิม';
+
+  @override
+  String get confirmAndSave => 'ยืนยันและบันทึก';
+
+  @override
+  String get otpSentTo => 'ส่ง OTP ไปที่';
+
+  @override
+  String get pleaseEnterNewEmail => 'กรุณากรอกอีเมลใหม่';
+
+  @override
+  String get pleaseEnterPhone => 'กรุณากรอกเบอร์โทร';
+
+  @override
+  String get pleaseEnterValidOtp4Digits => 'กรุณากรอกรหัส OTP 4 หลัก';
+
+  @override
+  String get contactChangeSuccessTitle => 'บันทึกเรียบร้อยแล้ว';
+
+  @override
+  String get contactChangeErrorTitle => 'ไม่สำเร็จ';
+
+  @override
+  String get pleaseAddEmailFirstTitle => 'กรุณาเพิ่มอีเมลก่อน';
+
+  @override
+  String get pleaseAddEmailFirstMessage =>
+      'กรุณาเพิ่มอีเมลในหน้านี้ก่อนทำการเปลี่ยนอีเมล';
+
+  @override
+  String get emailChangedSuccessfully => 'เปลี่ยนอีเมลเรียบร้อยแล้ว';
+
+  @override
+  String get phoneChangedSuccessfully => 'เปลี่ยนเบอร์โทรเรียบร้อยแล้ว';
 }

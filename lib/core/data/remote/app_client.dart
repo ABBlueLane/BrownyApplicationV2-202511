@@ -138,6 +138,27 @@ abstract class AppClient {
     @Body() ChangePasswordRequest body,
   );
 
+  /// API ขอเปลี่ยนอีเมล/เบอร์โทร (ส่ง OTP ไปช่องทางเดิมหรือใหม่)
+  ///
+  /// Body: id, field (`email`|`phone`), new_value
+  /// Response data.step: `verify_old` | `verify_new`
+  @POST('/customer/contact-change/request')
+  Future<HttpResponse<ContactChangeResponse>> requestContactChange(
+    @Body() ContactChangeRequest body,
+  );
+
+  /// API ยืนยัน OTP ช่องทางเดิม แล้วส่ง OTP ไปช่องทางใหม่
+  @POST('/customer/contact-change/verify-old')
+  Future<HttpResponse<ContactChangeResponse>> verifyOldContactChange(
+    @Body() ContactChangeOtpRequest body,
+  );
+
+  /// API ยืนยัน OTP ช่องทางใหม่ และบันทึกการเปลี่ยนอีเมล/เบอร์
+  @POST('/customer/contact-change/confirm')
+  Future<HttpResponse<ContactChangeResponse>> confirmContactChange(
+    @Body() ContactChangeOtpRequest body,
+  );
+
   /// DONG 2026-02-12
   ///
   /// API fetch popups สำหรับแสดงในแต่ละหน้า

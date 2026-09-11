@@ -1657,4 +1657,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get couponFullyRedeemed => 'Fully Redeemed';
+
+  @override
+  String get changePhone => 'Change Phone Number';
+
+  @override
+  String get addEmail => 'Add Email';
+
+  @override
+  String get currentContactLabel => 'Current';
+
+  @override
+  String get currentContactNone => 'Not set';
+
+  @override
+  String get newEmailPlaceholder => 'New email';
+
+  @override
+  String get emailPlaceholderAdd => 'Email (ex001@browny.com)';
+
+  @override
+  String get newPhonePlaceholder => 'New phone number (08xxxxxxxx)';
+
+  @override
+  String get phonePlaceholderAdd => 'Phone number (08xxxxxxxx)';
+
+  @override
+  String get sendOtp => 'Send OTP';
+
+  @override
+  String get verifyOldContactOtp => 'Verify OTP on current contact';
+
+  @override
+  String get confirmAndSave => 'Confirm and Save';
+
+  @override
+  String get otpSentTo => 'OTP sent to';
+
+  @override
+  String get pleaseEnterNewEmail => 'Please enter a new email';
+
+  @override
+  String get pleaseEnterPhone => 'Please enter a phone number';
+
+  @override
+  String get pleaseEnterValidOtp4Digits => 'Please enter a 4-digit OTP';
+
+  @override
+  String get contactChangeSuccessTitle => 'Saved successfully';
+
+  @override
+  String get contactChangeErrorTitle => 'Unsuccessful';
+
+  @override
+  String get pleaseAddEmailFirstTitle => 'Please add an email first';
+
+  @override
+  String get pleaseAddEmailFirstMessage =>
+      'Please add an email on this page before changing email';
+
+  @override
+  String get emailChangedSuccessfully => 'Email changed successfully';
+
+  @override
+  String get phoneChangedSuccessfully => 'Phone number changed successfully';
 }

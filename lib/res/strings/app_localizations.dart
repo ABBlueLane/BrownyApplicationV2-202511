@@ -3255,6 +3255,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fully Redeemed'**
   String get couponFullyRedeemed;
+
+  /// No description provided for @changePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Phone Number'**
+  String get changePhone;
+
+  /// No description provided for @addEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Email'**
+  String get addEmail;
+
+  /// No description provided for @currentContactLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get currentContactLabel;
+
+  /// No description provided for @currentContactNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get currentContactNone;
+
+  /// No description provided for @newEmailPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'New email'**
+  String get newEmailPlaceholder;
+
+  /// No description provided for @emailPlaceholderAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Email (ex001@browny.com)'**
+  String get emailPlaceholderAdd;
+
+  /// No description provided for @newPhonePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'New phone number (08xxxxxxxx)'**
+  String get newPhonePlaceholder;
+
+  /// No description provided for @phonePlaceholderAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number (08xxxxxxxx)'**
+  String get phonePlaceholderAdd;
+
+  /// No description provided for @sendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send OTP'**
+  String get sendOtp;
+
+  /// No description provided for @verifyOldContactOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify OTP on current contact'**
+  String get verifyOldContactOtp;
+
+  /// No description provided for @confirmAndSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm and Save'**
+  String get confirmAndSave;
+
+  /// No description provided for @otpSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP sent to'**
+  String get otpSentTo;
+
+  /// No description provided for @pleaseEnterNewEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a new email'**
+  String get pleaseEnterNewEmail;
+
+  /// No description provided for @pleaseEnterPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a phone number'**
+  String get pleaseEnterPhone;
+
+  /// No description provided for @pleaseEnterValidOtp4Digits.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a 4-digit OTP'**
+  String get pleaseEnterValidOtp4Digits;
+
+  /// No description provided for @contactChangeSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved successfully'**
+  String get contactChangeSuccessTitle;
+
+  /// No description provided for @contactChangeErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsuccessful'**
+  String get contactChangeErrorTitle;
+
+  /// No description provided for @pleaseAddEmailFirstTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add an email first'**
+  String get pleaseAddEmailFirstTitle;
+
+  /// No description provided for @pleaseAddEmailFirstMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add an email on this page before changing email'**
+  String get pleaseAddEmailFirstMessage;
+
+  /// No description provided for @emailChangedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Email changed successfully'**
+  String get emailChangedSuccessfully;
+
+  /// No description provided for @phoneChangedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number changed successfully'**
+  String get phoneChangedSuccessfully;
 }
 
 class _AppLocalizationsDelegate

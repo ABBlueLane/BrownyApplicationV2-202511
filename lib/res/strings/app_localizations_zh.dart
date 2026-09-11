@@ -1608,4 +1608,67 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get couponFullyRedeemed => '已满额';
+
+  @override
+  String get changePhone => '更改电话号码';
+
+  @override
+  String get addEmail => '添加电子邮件';
+
+  @override
+  String get currentContactLabel => '当前信息';
+
+  @override
+  String get currentContactNone => '尚未设置';
+
+  @override
+  String get newEmailPlaceholder => '新电子邮件';
+
+  @override
+  String get emailPlaceholderAdd => '电子邮件 (ex001@browny.com)';
+
+  @override
+  String get newPhonePlaceholder => '新电话号码 (08xxxxxxxx)';
+
+  @override
+  String get phonePlaceholderAdd => '电话号码 (08xxxxxxxx)';
+
+  @override
+  String get sendOtp => '发送 OTP';
+
+  @override
+  String get verifyOldContactOtp => '验证原联系方式 OTP';
+
+  @override
+  String get confirmAndSave => '确认并保存';
+
+  @override
+  String get otpSentTo => 'OTP 已发送至';
+
+  @override
+  String get pleaseEnterNewEmail => '请输入新电子邮件';
+
+  @override
+  String get pleaseEnterPhone => '请输入电话号码';
+
+  @override
+  String get pleaseEnterValidOtp4Digits => '请输入 4 位 OTP';
+
+  @override
+  String get contactChangeSuccessTitle => '保存成功';
+
+  @override
+  String get contactChangeErrorTitle => '未成功';
+
+  @override
+  String get pleaseAddEmailFirstTitle => '请先添加电子邮件';
+
+  @override
+  String get pleaseAddEmailFirstMessage => '请先在此页面添加电子邮件后再更改电子邮件';
+
+  @override
+  String get emailChangedSuccessfully => '电子邮件更改成功';
+
+  @override
+  String get phoneChangedSuccessfully => '电话号码更改成功';
 }

@@ -1,5 +1,7 @@
 export 'package:browny_applications_new/core/data/remote/models/request/banner_collect_request.dart';
 export 'package:browny_applications_new/core/data/remote/models/request/change_password_request.dart';
+export 'package:browny_applications_new/core/data/remote/models/request/contact_change_request.dart';
+export 'package:browny_applications_new/core/data/remote/models/request/contact_change_otp_request.dart';
 export 'package:browny_applications_new/core/data/remote/models/request/coupon_list_request.dart';
 export 'package:browny_applications_new/core/data/remote/models/request/coupon_collect_request.dart';
 export 'package:browny_applications_new/core/data/remote/models/request/coupon_order_request.dart';
@@ -27,6 +29,7 @@ export 'package:browny_applications_new/core/data/remote/models/response/coin_cl
 export 'package:browny_applications_new/core/data/remote/models/response/coin_claimed_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/coin_history_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/contact_response.dart';
+export 'package:browny_applications_new/core/data/remote/models/response/contact_change_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/coupon_available_count_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/coupon_collect_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/coupon_data_response.dart';
