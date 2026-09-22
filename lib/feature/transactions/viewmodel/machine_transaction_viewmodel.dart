@@ -238,11 +238,31 @@ class MachineTransactionViewmodel extends TransactionsViewmodel {
     }
     if (!context.mounted) return;
 
+    // After scan, surface coupons from programs.available_coupons immediately.
+    // Keep a previously selected coupon only if it is still in the fresh list;
+    // otherwise auto-select the first usable coupon so the checkout card is not empty
+    // until the user opens Add/Select.
+    final fresh = MachineProgramModel.fromResponse(result.data);
+    final previousSelected = currentProgram?.selectedCoupon;
+    final previousStillValid = previousSelected != null &&
+        (fresh.availableCoupons?.any((c) => c.id == previousSelected.id) ??
+            false);
+
+    final AvailableCouponData? nextSelected;
+    if (previousStillValid) {
+      nextSelected = previousSelected;
+    } else if (fresh.availableCoupons?.isNotEmpty == true) {
+      nextSelected = fresh.availableCoupons!.first;
+    } else {
+      nextSelected = null;
+    }
+
     _machineProgramsNotifier.value = UiResult.success(
-      data: MachineProgramModel.fromResponse(result.data).copyWith(
+      data: fresh.copyWith(
         selectedProgram: currentProgram?.selectedProgram,
         selectedAddTime: currentProgram?.selectedAddTime,
-        selectedCoupon: currentProgram?.selectedCoupon,
+        selectedCoupon: nextSelected,
+        clearSelectedCoupon: nextSelected == null,
       ),
     );
     if (context.mounted) {
