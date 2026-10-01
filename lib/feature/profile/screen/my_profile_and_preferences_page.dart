@@ -9,7 +9,9 @@ import 'package:browny_applications_new/feature/invit_friend/screen/invit_friend
 import 'package:browny_applications_new/feature/map/screens/map_page.dart';
 import 'package:browny_applications_new/feature/profile/repository/notification_preferences_repo.dart';
 import 'package:browny_applications_new/feature/profile/repository/profile_repo.dart';
+import 'package:browny_applications_new/feature/profile/screen/change_contact_page.dart';
 import 'package:browny_applications_new/feature/profile/screen/profile_page.dart';
+import 'package:browny_applications_new/feature/profile/viewmodel/change_contact_viewmodel.dart';
 import 'package:browny_applications_new/feature/profile/viewmodel/profile_viewmodel.dart';
 import 'package:browny_applications_new/feature/scaner/screen/scanner_page.dart';
 import 'package:browny_applications_new/feature/transactions/screens/coupons_evoucher/coupon_voucher_page.dart';
@@ -805,7 +807,23 @@ class _MyProfileAndPreferencesContentState
               title: context.wording.changeEmail,
               suffixWidget: Assets.svg.icArrowForward.svg(),
               onTap: () {
-                ProfilePage.goToPage(context);
+                ChangeContactPage.goToPage(
+                  context,
+                  field: ChangeContactField.email,
+                );
+              },
+            ),
+
+            // Phone Settings
+            _buildPreferenceItem(
+              leadingSvg: Assets.iconProfilePreferences.icCalling,
+              title: context.wording.changePhone,
+              suffixWidget: Assets.svg.icArrowForward.svg(),
+              onTap: () {
+                ChangeContactPage.goToPage(
+                  context,
+                  field: ChangeContactField.phone,
+                );
               },
             ),
 

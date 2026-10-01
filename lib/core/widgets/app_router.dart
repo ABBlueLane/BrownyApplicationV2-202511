@@ -22,7 +22,9 @@ import 'package:browny_applications_new/feature/transactions/screens/history_tra
 import 'package:browny_applications_new/feature/update/screen/force_update_page.dart';
 import 'package:browny_applications_new/feature/map/screens/map_page.dart';
 import 'package:browny_applications_new/feature/map/screens/store_detail_page.dart';
+import 'package:browny_applications_new/feature/profile/screen/change_contact_page.dart';
 import 'package:browny_applications_new/feature/profile/screen/my_profile_and_preferences_page.dart';
+import 'package:browny_applications_new/feature/profile/viewmodel/change_contact_viewmodel.dart';
 import 'package:browny_applications_new/feature/scaner/viewmodel/scanner_viewmodel.dart';
 import 'package:browny_applications_new/feature/transactions/screens/available_payment_method_page.dart';
 import 'package:browny_applications_new/feature/transactions/screens/coupons_evoucher/coupon_voucher_page.dart';
@@ -105,6 +107,19 @@ class AppRouter {
         name: MyProfileAndPreferencesPage.pageName,
         builder: (context, state) {
           return MyProfileAndPreferencesPage();
+        },
+      ),
+      GoRoute(
+        path: ChangeContactPage.pagePath,
+        name: ChangeContactPage.pageName,
+        builder: (context, state) {
+          ChangeContactField field = ChangeContactField.email;
+          try {
+            final extra = state.extra as Map<String, dynamic>?;
+            field = extra?[ChangeContactPage.kField] as ChangeContactField? ??
+                ChangeContactField.email;
+          } catch (_) {}
+          return ChangeContactPage(field: field);
         },
       ),
       GoRoute(
