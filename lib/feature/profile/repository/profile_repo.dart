@@ -17,6 +17,7 @@ mixin ProfileDataSourceMixin {
     UpdateProfileRequest request,
   );
   FutureOr<RepoResult<CustomerProfileData>> logout();
+  FutureOr<RepoResult<BirthdayPromoInfoResponse?>> fetchBirthdayPromoInfo();
 }
 
 class ProfileRepo extends CustomerDataRepo with ProfileDataSourceMixin {
@@ -25,6 +26,27 @@ class ProfileRepo extends CustomerDataRepo with ProfileDataSourceMixin {
     'male',
     'female',
   ]);
+
+  @override
+  FutureOr<RepoResult<BirthdayPromoInfoResponse?>> fetchBirthdayPromoInfo() async {
+    try {
+      final response = await requireRemote.fetchBirthdayPromoInfo();
+      if (response.isSuccessful) {
+        // API คืน null เมื่อ inactive — ใช้ empty เพื่อให้แอป fallback
+        if (response.data == null) {
+          return RepoResult.empty();
+        }
+        return RepoResult.success(data: response.data);
+      }
+      return RepoResult.empty(
+        error: Exception(
+          'HTTP ${response.response.statusCode}: ${response.response.statusMessage}',
+        ),
+      );
+    } catch (e) {
+      return RepoResult.error(error: Exception(e.toString()));
+    }
+  }
 
   @override
   FutureOr<RepoResult<CustomerProfileResponse>> updateProfile(

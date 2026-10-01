@@ -641,6 +641,12 @@ abstract class AppClient {
     @Body() Map<String, String> body,
   );
 
+  /// API Fetch Birthday Promo Info (popup เงื่อนไขสิทธิพิเศษวันเกิด)
+  ///
+  /// คืน null เมื่อ inactive / ไม่มี config
+  @GET('/profile/birthday-promo-info')
+  Future<HttpResponse<BirthdayPromoInfoResponse?>> fetchBirthdayPromoInfo();
+
   /// DONG 2025-11-24
   ///
   /// API fech profile ของ User ที่ login เข้ามาใช้งาน

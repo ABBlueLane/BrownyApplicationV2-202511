@@ -12,6 +12,7 @@ import 'package:browny_applications_new/feature/authentication/repository/pin_bi
 import 'package:browny_applications_new/feature/authentication/screen/app_pin_page.dart';
 import 'package:browny_applications_new/feature/authentication/viewmodel/pin_biometric_viewmodel.dart';
 import 'package:browny_applications_new/core/data/remote/models/request/update_profile_request.dart';
+import 'package:browny_applications_new/core/data/remote/models/response/birthday_promo_info_response.dart';
 import 'package:browny_applications_new/core/data/remote/models/response/contact_response.dart';
 import 'package:browny_applications_new/core/data/remote/models/response/customer_qr_response.dart';
 import 'package:browny_applications_new/core/data/remote/models/response/notification_preferences_response.dart';
@@ -67,7 +68,31 @@ class ProfileViewModel extends AppViewModelFormFieldValidation {
     return initialDate;
   }
 
+  /// ข้อมูล info จาก Gateway (null = ใช้ fallback hardcode)
+  BirthdayPromoInfoResponse? _birthdayPromoInfo;
+
   String titlePopupBirthDayOffers(BuildContext context) {
+    final remote = _birthdayPromoInfo?.title?.getText(context).trim();
+    if (remote != null && remote.isNotEmpty) {
+      return remote;
+    }
+    return _fallbackTitlePopupBirthDayOffers(context);
+  }
+
+  String descriptionPopupBirthDayOffers(BuildContext context) {
+    final remote = _birthdayPromoInfo?.description?.getText(context).trim();
+    if (remote != null && remote.isNotEmpty) {
+      return remote;
+    }
+    return _fallbackDescriptionPopupBirthDayOffers(context);
+  }
+
+  /// URL รูปจาก API ตามภาษา — ว่างถ้าไม่มี ให้ UI ใช้ asset fallback
+  String imageUrlPopupBirthDayOffers(BuildContext context) {
+    return _birthdayPromoInfo?.image?.getText(context).trim() ?? '';
+  }
+
+  String _fallbackTitlePopupBirthDayOffers(BuildContext context) {
     switch (context.languageCode) {
       case 'en':
         return 'Special birthday privileges are waiting for you!';
@@ -78,15 +103,9 @@ class ProfileViewModel extends AppViewModelFormFieldValidation {
     }
   }
 
-  String descriptionPopupBirthDayOffers(BuildContext context) {
+  String _fallbackDescriptionPopupBirthDayOffers(BuildContext context) {
     switch (context.languageCode) {
       case 'en':
-        //         return '''
-        // Terms and Conditions
-        // • Receive special gifts and exclusive member promotions during your birth month
-        // • To ensure benefit accuracy, birthdate cannot be self-edited. If you need to change it, please contact admin with your ID card attached
-        // • If birthday privileges have already been used, birthdate cannot be modified
-        // ''';
         return '''
 <p>Terms and Conditions</p>
 <ul>
@@ -96,12 +115,6 @@ class ProfileViewModel extends AppViewModelFormFieldValidation {
 </ul>
 ''';
       case 'zh':
-        //         return '''
-        // 条款和条件
-        // • 在您的生日月份获得特别礼物和会员专属促销
-        // • 为确保福利的准确性，生日日期无法自行编辑。如需更改，请联系管理员并附上您的身份证
-        // • 如果已使用生日特权，则无法修改生日日期
-        // ''';
         return '''
 <p>条款和条件</p>
 <ul>
@@ -111,12 +124,6 @@ class ProfileViewModel extends AppViewModelFormFieldValidation {
 </ul>
 ''';
       default:
-        //         return '''
-        // เงื่อนไข
-        // • รับของขวัญพิเศษ และโปรลับเฉพาะสมาชิกในเดือนเกิด
-        // • เพื่อความถูกต้องของสิทธิประโยชน์ วันเกิดจะไม่สามารถแก้ไขได้เอง หากต้องการเปลี่ยน โปรดติดต่อแอดมินพร้อมแนบรูปบัตรประชาชน
-        // • ถ้าหากใช้สิทธิพิเศษวันเกิดไปแล้ว จะไม่สามารถแก้ไขวันเกิดได้
-        // ''';
         return '''
 <p>เงื่อนไข</p>
 <ul>
@@ -617,7 +624,19 @@ class ProfileViewModel extends AppViewModelFormFieldValidation {
   }
 
   Future<void> fetchProfileData() async {
-    final profileResult = await repo.fetchProfile('');
+    // โหลด birthday promo info คู่กับ profile (ไม่บล็อกถ้า error)
+    final profileFuture = repo.fetchProfile('');
+    final promoFuture = repo.fetchBirthdayPromoInfo();
+
+    final profileResult = await profileFuture;
+    final promoResult = await promoFuture;
+
+    if (promoResult.isSuccess) {
+      _birthdayPromoInfo = promoResult.data;
+    } else {
+      _birthdayPromoInfo = null;
+    }
+
     if (profileResult.isEmpty) {
       if (profileResult.hasError) {
         _profileDataNotifier.value = UiResult.empty(

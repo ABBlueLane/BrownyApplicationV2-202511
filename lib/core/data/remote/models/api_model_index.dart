@@ -22,6 +22,7 @@ export 'package:browny_applications_new/core/data/remote/models/response/order_h
 export 'package:browny_applications_new/core/data/remote/models/response/banner_highlight_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/banner_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/base_response.dart';
+export 'package:browny_applications_new/core/data/remote/models/response/birthday_promo_info_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/browny_live_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/coin_claim_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/coin_claimed_response.dart';

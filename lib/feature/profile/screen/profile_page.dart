@@ -1078,7 +1078,24 @@ class _ProfileWidgetState extends State<ProfileWidget> {
 
                 Positioned(
                   top: -45.w,
-                  child: Assets.png.brownyPromotion.image(width: 250.w),
+                  child: Builder(
+                    builder: (_) {
+                      final imageUrl = _viewModel
+                          .imageUrlPopupBirthDayOffers(context);
+                      if (imageUrl.isNotEmpty) {
+                        return Image.network(
+                          imageUrl,
+                          width: 250.w,
+                          errorBuilder: (_, _, _) {
+                            return Assets.png.brownyPromotion.image(
+                              width: 250.w,
+                            );
+                          },
+                        );
+                      }
+                      return Assets.png.brownyPromotion.image(width: 250.w);
+                    },
+                  ),
                 ),
               ],
             ),
