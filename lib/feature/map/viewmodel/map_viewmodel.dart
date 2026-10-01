@@ -1,6 +1,8 @@
+import 'package:browny_applications_new/core/data/remote/models/converters/marker_icon_converter.dart';
 import 'package:browny_applications_new/core/data/remote/models/response/map_location_response.dart';
 import 'package:browny_applications_new/core/data/remote/models/response/store_detail_response.dart';
 import 'package:browny_applications_new/core/utils/app_extensions.dart';
+import 'package:browny_applications_new/core/utils/google_maps_helper.dart';
 import 'package:browny_applications_new/core/utils/ui_result.dart';
 import 'package:browny_applications_new/core/viewmodels/app_viewmodel.dart';
 import 'package:browny_applications_new/feature/map/repository/map_repo.dart';
@@ -21,6 +23,10 @@ class MapViewModel extends AppViewModel {
   List<StoreLocationItem> get storeList => _storeList;
 
   TextEditingController textSerchController = TextEditingController();
+
+  /// ความกว้าง marker ปัจจุบัน (ตาม zoom แบบ continuous)
+  int _markerWidth = GoogleMapsHelper.baseMarkerWidth;
+  int get markerWidth => _markerWidth;
 
   // ========== Logic, Function ==========
   final Map<String, StoreLocationItem?> _servicesAvailable = {
@@ -56,6 +62,66 @@ class MapViewModel extends AppViewModel {
     }
 
     return UiResult.success(data: _storeList);
+  }
+
+  /// Resize marker icons ตามความกว้างใหม่จาก zoom
+  ///
+  /// ใช้ bytes / bitmap ที่ cache ใน [MarkerIconConverter] จึงไม่ download/decode ซ้ำ
+  /// Returns `true` เมื่อมีการเปลี่ยนขนาดจริง
+  Future<bool> resizeMarkerIcons(int width) async {
+    if (_storeList.isEmpty || width == _markerWidth) {
+      return false;
+    }
+
+    _markerWidth = width;
+    final converter = MarkerIconConverter();
+
+    try {
+      final activeUrls = <String>{};
+      final inactiveUrls = <String>{};
+      for (final store in _storeList) {
+        final activeUrl = store.markerIconActiveUrl;
+        if (activeUrl != null) activeUrls.add(activeUrl);
+        final inactiveUrl = store.markerIconInactiveUrl;
+        if (inactiveUrl != null) inactiveUrls.add(inactiveUrl);
+      }
+
+      final activeByUrl = <String, BitmapDescriptor>{};
+      final inactiveByUrl = <String, BitmapDescriptor>{};
+
+      await Future.wait([
+        ...activeUrls.map((url) async {
+          activeByUrl[url] = await converter.getMarkerIconAtWidth(
+            url,
+            width: width,
+          );
+        }),
+        ...inactiveUrls.map((url) async {
+          inactiveByUrl[url] = await converter.getMarkerIconAtWidth(
+            url,
+            width: width,
+          );
+        }),
+      ]);
+
+      for (final store in _storeList) {
+        final activeUrl = store.markerIconActiveUrl;
+        if (activeUrl != null) {
+          store.markerIconActive = activeByUrl[activeUrl];
+        }
+        final inactiveUrl = store.markerIconInactiveUrl;
+        if (inactiveUrl != null) {
+          store.markerIconInactive = inactiveByUrl[inactiveUrl];
+        }
+      }
+
+      return true;
+    } catch (e) {
+      debugPrint('Error resizing marker icons: $e');
+      return false;
+    } finally {
+      converter.dispose();
+    }
   }
 
   /// Fetch รายละเอียดร้านค้าตาม storeId และตำแหน่งปัจจุบัน

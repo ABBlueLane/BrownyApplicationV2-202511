@@ -57,6 +57,10 @@ class _MapContentState extends State<MapContent> {
   GoogleMapController? _mapController;
   Set<Marker> _markers = {};
   LatLng? _currentPosition;
+  double _currentZoom = GoogleMapsHelper.defaultZoom;
+  bool _isResizingMarkers = false;
+  bool _pendingMarkerResize = false;
+  Timer? _markerResizeThrottle;
 
   bool _isSearching = false;
 
@@ -188,6 +192,53 @@ class _MapContentState extends State<MapContent> {
     }).toSet();
   }
 
+  /// จัดคิว resize pin ระหว่าง zoom — throttle ให้สมูทโดยไม่ regenerate ถี่เกิน
+  void _scheduleMarkerResize({bool immediate = false}) {
+    if (_viewmodel.storeList.isEmpty) return;
+
+    if (immediate) {
+      _markerResizeThrottle?.cancel();
+      unawaited(_updateMarkerSizeForZoom());
+      return;
+    }
+
+    if (_markerResizeThrottle?.isActive ?? false) return;
+
+    _markerResizeThrottle = Timer(const Duration(milliseconds: 50), () {
+      unawaited(_updateMarkerSizeForZoom());
+    });
+  }
+
+  /// อัปเดตขนาด pin ตาม zoom แบบ continuous (ระหว่าง zoom + เมื่อ idle)
+  Future<void> _updateMarkerSizeForZoom() async {
+    if (_viewmodel.storeList.isEmpty) return;
+
+    if (_isResizingMarkers) {
+      _pendingMarkerResize = true;
+      return;
+    }
+
+    final targetWidth = GoogleMapsHelper.calculateMarkerWidth(_currentZoom);
+    if (targetWidth == _viewmodel.markerWidth) return;
+
+    _isResizingMarkers = true;
+    try {
+      final changed = await _viewmodel.resizeMarkerIcons(targetWidth);
+      if (changed && mounted) {
+        setState(() {
+          _markers = _createMarkersFromStores(_viewmodel.storeList);
+        });
+      }
+    } finally {
+      _isResizingMarkers = false;
+      if (_pendingMarkerResize) {
+        _pendingMarkerResize = false;
+        // ใช้ zoom ล่าสุดหลัง resize จบ เพื่อตามจังหวะนิ้วผู้ใช้
+        unawaited(_updateMarkerSizeForZoom());
+      }
+    }
+  }
+
   /// Handle marker tap
   Future<void> _onMarkerTapped(StoreLocationItem store) async {
     AppOverlays.showLoading(context);
@@ -287,6 +338,7 @@ class _MapContentState extends State<MapContent> {
 
   @override
   void dispose() {
+    _markerResizeThrottle?.cancel();
     _searchFocusNode.removeListener(_onFocusTextChange);
     _mapController?.dispose();
     // _searchController.dispose();
@@ -316,6 +368,13 @@ class _MapContentState extends State<MapContent> {
                 mapType: MapType.normal,
                 onMapCreated: (GoogleMapController controller) {
                   _mapController = controller;
+                },
+                onCameraMove: (CameraPosition position) {
+                  _currentZoom = position.zoom;
+                  _scheduleMarkerResize();
+                },
+                onCameraIdle: () {
+                  _scheduleMarkerResize(immediate: true);
                 },
               ),
 

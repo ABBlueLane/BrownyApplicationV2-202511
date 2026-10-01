@@ -12,6 +12,51 @@ class GoogleMapsHelper {
   /// ค่า default ของ Zoom level
   static const double defaultZoom = 15.0;
 
+  /// ความกว้าง marker ที่ zoom ปกติ (defaultZoom)
+  static const int baseMarkerWidth = 80;
+
+  /// ความกว้าง marker ต่ำสุดเมื่อซูมออกมาก (ไม่ให้เล็กจนมองไม่เห็น)
+  static const int minMarkerWidth = 44;
+
+  /// ความกว้าง marker สูงสุดเมื่อซูมเข้ามาก
+  static const int maxMarkerWidth = 100;
+
+  /// Zoom ที่เริ่มย่อ pin (ต่ำกว่านี้ใช้ min)
+  static const double minZoomForScale = 11.0;
+
+  /// Zoom ที่ขยาย pin ถึง max (สูงกว่านี้ใช้ max)
+  static const double maxZoomForScale = 17.0;
+
+  /// ขั้นขนาด pin (px) — ละเอียดพอให้ดูสมูท แต่ยัง cache ได้
+  static const int markerWidthStep = 2;
+
+  /// คำนวณความกว้าง marker ตาม zoom แบบ continuous (linear 2 ช่วง)
+  ///
+  /// - zoom ≤ [minZoomForScale] → [minMarkerWidth]
+  /// - zoom = [defaultZoom] → [baseMarkerWidth]
+  /// - zoom ≥ [maxZoomForScale] → [maxMarkerWidth]
+  /// แล้ว snap เป็นขั้น [markerWidthStep] เพื่อให้ resize ไม่ถี่เกิน แต่ยังดูสมูท
+  static int calculateMarkerWidth(double zoom) {
+    final double continuous;
+    if (zoom <= minZoomForScale) {
+      continuous = minMarkerWidth.toDouble();
+    } else if (zoom >= maxZoomForScale) {
+      continuous = maxMarkerWidth.toDouble();
+    } else if (zoom <= defaultZoom) {
+      final t = (zoom - minZoomForScale) / (defaultZoom - minZoomForScale);
+      continuous =
+          minMarkerWidth + (baseMarkerWidth - minMarkerWidth) * t;
+    } else {
+      final t = (zoom - defaultZoom) / (maxZoomForScale - defaultZoom);
+      continuous =
+          baseMarkerWidth + (maxMarkerWidth - baseMarkerWidth) * t;
+    }
+
+    final stepped =
+        (continuous / markerWidthStep).round() * markerWidthStep;
+    return stepped.clamp(minMarkerWidth, maxMarkerWidth);
+  }
+
   /// สร้าง Camera Position
   static CameraPosition createCameraPosition({
     required LatLng target,
