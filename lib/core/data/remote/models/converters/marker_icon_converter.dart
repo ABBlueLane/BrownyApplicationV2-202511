@@ -11,6 +11,9 @@ class MarkerIconConverter {
   /// Cache bytes ต้นฉบับตาม URL เพื่อ resize ซ้ำได้โดยไม่ต้อง download ใหม่
   static final Map<String, Uint8List> _bytesCache = {};
 
+  /// Cache BitmapDescriptor ตาม URL + ความกว้าง เพื่อไม่ต้อง decode ซ้ำตอน zoom กลับมา
+  static final Map<String, BitmapDescriptor> _bitmapCache = {};
+
   /// Dio instance เฉพาะกิจสำหรับ download รูปภาพ
   final Dio _dio = Dio(
     BaseOptions(
@@ -18,6 +21,8 @@ class MarkerIconConverter {
       receiveTimeout: const Duration(seconds: 30),
     ),
   );
+
+  static String _bitmapCacheKey(String url, int width) => '$url@$width';
 
   /// Download marker icon จาก URL และแปลงเป็น BitmapDescriptor
   ///
@@ -28,11 +33,19 @@ class MarkerIconConverter {
     int width = 100,
   }) async {
     try {
+      final cacheKey = _bitmapCacheKey(url, width);
+      final cachedBitmap = _bitmapCache[cacheKey];
+      if (cachedBitmap != null) {
+        return cachedBitmap;
+      }
+
       final imageData = await _getOrDownloadBytes(url);
       if (imageData == null) {
         return BitmapDescriptor.defaultMarker;
       }
-      return resizeFromBytes(imageData, width: width);
+      final bitmap = await resizeFromBytes(imageData, width: width);
+      _bitmapCache[cacheKey] = bitmap;
+      return bitmap;
     } catch (e) {
       debugPrint("Dio Error loading marker: $e");
       return BitmapDescriptor.defaultMarker;

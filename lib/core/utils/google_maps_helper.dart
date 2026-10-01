@@ -15,22 +15,46 @@ class GoogleMapsHelper {
   /// ความกว้าง marker ที่ zoom ปกติ (defaultZoom)
   static const int baseMarkerWidth = 80;
 
-  /// ความกว้าง marker ต่ำสุดเมื่อซูมออกมาก
-  static const int minMarkerWidth = 20;
+  /// ความกว้าง marker ต่ำสุดเมื่อซูมออกมาก (ไม่ให้เล็กจนมองไม่เห็น)
+  static const int minMarkerWidth = 44;
 
   /// ความกว้าง marker สูงสุดเมื่อซูมเข้ามาก
   static const int maxMarkerWidth = 100;
 
-  /// คำนวณความกว้าง marker ตาม zoom เป็น bucket
-  /// เพื่อลดการ regenerate BitmapDescriptor บ่อยเกินไป
+  /// Zoom ที่เริ่มย่อ pin (ต่ำกว่านี้ใช้ min)
+  static const double minZoomForScale = 11.0;
+
+  /// Zoom ที่ขยาย pin ถึง max (สูงกว่านี้ใช้ max)
+  static const double maxZoomForScale = 17.0;
+
+  /// ขั้นขนาด pin (px) — ละเอียดพอให้ดูสมูท แต่ยัง cache ได้
+  static const int markerWidthStep = 2;
+
+  /// คำนวณความกว้าง marker ตาม zoom แบบ continuous (linear 2 ช่วง)
   ///
-  /// zoom < 11 → 20px, < 13 → 32px, < 14.5 → 48px, < 16 → 80px, นอกนั้น → 100px
+  /// - zoom ≤ [minZoomForScale] → [minMarkerWidth]
+  /// - zoom = [defaultZoom] → [baseMarkerWidth]
+  /// - zoom ≥ [maxZoomForScale] → [maxMarkerWidth]
+  /// แล้ว snap เป็นขั้น [markerWidthStep] เพื่อให้ resize ไม่ถี่เกิน แต่ยังดูสมูท
   static int calculateMarkerWidth(double zoom) {
-    if (zoom < 11) return minMarkerWidth;
-    if (zoom < 13) return 32;
-    if (zoom < 14.5) return 48;
-    if (zoom < 16) return baseMarkerWidth;
-    return maxMarkerWidth;
+    final double continuous;
+    if (zoom <= minZoomForScale) {
+      continuous = minMarkerWidth.toDouble();
+    } else if (zoom >= maxZoomForScale) {
+      continuous = maxMarkerWidth.toDouble();
+    } else if (zoom <= defaultZoom) {
+      final t = (zoom - minZoomForScale) / (defaultZoom - minZoomForScale);
+      continuous =
+          minMarkerWidth + (baseMarkerWidth - minMarkerWidth) * t;
+    } else {
+      final t = (zoom - defaultZoom) / (maxZoomForScale - defaultZoom);
+      continuous =
+          baseMarkerWidth + (maxMarkerWidth - baseMarkerWidth) * t;
+    }
+
+    final stepped =
+        (continuous / markerWidthStep).round() * markerWidthStep;
+    return stepped.clamp(minMarkerWidth, maxMarkerWidth);
   }
 
   /// สร้าง Camera Position

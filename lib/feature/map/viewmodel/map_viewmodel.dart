@@ -24,7 +24,7 @@ class MapViewModel extends AppViewModel {
 
   TextEditingController textSerchController = TextEditingController();
 
-  /// ความกว้าง marker ปัจจุบัน (bucket ตาม zoom)
+  /// ความกว้าง marker ปัจจุบัน (ตาม zoom แบบ continuous)
   int _markerWidth = GoogleMapsHelper.baseMarkerWidth;
   int get markerWidth => _markerWidth;
 
@@ -66,7 +66,7 @@ class MapViewModel extends AppViewModel {
 
   /// Resize marker icons ตามความกว้างใหม่จาก zoom
   ///
-  /// ใช้ bytes ที่ cache ใน [MarkerIconConverter] จึงไม่ download ซ้ำ
+  /// ใช้ bytes / bitmap ที่ cache ใน [MarkerIconConverter] จึงไม่ download/decode ซ้ำ
   /// Returns `true` เมื่อมีการเปลี่ยนขนาดจริง
   Future<bool> resizeMarkerIcons(int width) async {
     if (_storeList.isEmpty || width == _markerWidth) {
@@ -77,25 +77,40 @@ class MapViewModel extends AppViewModel {
     final converter = MarkerIconConverter();
 
     try {
+      final activeUrls = <String>{};
+      final inactiveUrls = <String>{};
+      for (final store in _storeList) {
+        final activeUrl = store.markerIconActiveUrl;
+        if (activeUrl != null) activeUrls.add(activeUrl);
+        final inactiveUrl = store.markerIconInactiveUrl;
+        if (inactiveUrl != null) inactiveUrls.add(inactiveUrl);
+      }
+
       final activeByUrl = <String, BitmapDescriptor>{};
       final inactiveByUrl = <String, BitmapDescriptor>{};
+
+      await Future.wait([
+        ...activeUrls.map((url) async {
+          activeByUrl[url] = await converter.getMarkerIconAtWidth(
+            url,
+            width: width,
+          );
+        }),
+        ...inactiveUrls.map((url) async {
+          inactiveByUrl[url] = await converter.getMarkerIconAtWidth(
+            url,
+            width: width,
+          );
+        }),
+      ]);
 
       for (final store in _storeList) {
         final activeUrl = store.markerIconActiveUrl;
         if (activeUrl != null) {
-          activeByUrl[activeUrl] ??= await converter.getMarkerIconAtWidth(
-            activeUrl,
-            width: width,
-          );
           store.markerIconActive = activeByUrl[activeUrl];
         }
-
         final inactiveUrl = store.markerIconInactiveUrl;
         if (inactiveUrl != null) {
-          inactiveByUrl[inactiveUrl] ??= await converter.getMarkerIconAtWidth(
-            inactiveUrl,
-            width: width,
-          );
           store.markerIconInactive = inactiveByUrl[inactiveUrl];
         }
       }
