@@ -567,6 +567,18 @@ abstract class AppClient {
     @Path('uuid') String uuid,
   );
 
+  /// DONG 2026-07-31
+  ///
+  /// API fetch ข้อความแจ้งเตือนหน้า Wallet (แสดงเป็น popup ตอนเปิดหน้าเติมเงิน)
+  ///
+  /// Response:
+  /// - title: object หลายภาษา {th, en, zh}
+  /// - description: object หลายภาษา {th, en, zh}
+  /// - ถ้าเป็น null คือไม่มีประกาศ ไม่ต้องแสดง popup
+  @GET('/wallet/firstNotification')
+  Future<HttpResponse<WalletFirstNotificationResponse?>>
+  fetchWalletFirstNotification();
+
   /// DONG 2026-02-16
   ///
   /// API fetch ประวัติการทำธุรกรรม wallet

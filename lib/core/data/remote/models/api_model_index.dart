@@ -67,6 +67,7 @@ export 'package:browny_applications_new/core/data/remote/models/response/topup_r
 export 'package:browny_applications_new/core/data/remote/models/response/update_notification_preferences_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/verify_otp_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/verify_pin_response.dart';
+export 'package:browny_applications_new/core/data/remote/models/response/wallet_first_notification_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/wallet_history_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/response/wallet_receipt_response.dart';
 export 'package:browny_applications_new/core/data/remote/models/api_configs.dart';

@@ -8,6 +8,7 @@ import 'package:browny_applications_new/core/data/remote/models/response/wallet_
 import 'package:browny_applications_new/core/utils/app_extensions.dart';
 import 'package:browny_applications_new/core/utils/ui_result.dart';
 import 'package:browny_applications_new/core/viewmodels/app_viewmodel.dart';
+import 'package:browny_applications_new/core/widgets/app_overlays.dart';
 import 'package:browny_applications_new/feature/contacts/repository/contact_repo.dart';
 import 'package:browny_applications_new/feature/wallet/error/wallet_exception.dart';
 import 'package:browny_applications_new/feature/wallet/models/receipt_data_model.dart';
@@ -226,6 +227,30 @@ class WalletViewModel extends AppViewModelObscureHandler {
   /// หยุดการตรวจสอบสถานะการชำระเงิน
   void stopPaymentStatusCheck() {
     _statusCheckTimer?.cancel();
+  }
+
+  /// DONG 2026-07-31
+  ///
+  /// fetch ข้อความแจ้งเตือนจาก API `/wallet/firstNotification`
+  /// แล้วแสดงเป็น popup ตอนเปิดหน้า Wallet
+  ///
+  /// ถ้า response เป็น null (ไม่มีประกาศ) จะไม่แสดงอะไร
+  Future<void> showFirstNotificationIfNeeded() async {
+    try {
+      final result = await repo.fetchFirstNotification();
+      if (!result.hasData || !result.data.hasContent) return;
+
+      if (!context.mounted) return;
+
+      final locale = context.languageCode;
+      await AppOverlays.showWalletDialog(
+        context,
+        title: result.data.title?.getTextByLocale(locale),
+        message: result.data.description?.getTextByLocale(locale) ?? '',
+      );
+    } catch (_) {
+      // ถ้า fetch ไม่สำเร็จ ไม่ต้องแสดง popup ใช้งานหน้า Wallet ต่อได้ปกติ
+    }
   }
 
   Future<void> fetchCredit() async {

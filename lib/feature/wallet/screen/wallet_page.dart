@@ -61,6 +61,8 @@ class _WalletWidgetState extends State<WalletWidget> {
     _viewModel.attachContext(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _viewModel.fetchCredit();
+      // แสดง popup แจ้งเตือนจาก API (ถ้ามี)
+      _viewModel.showFirstNotificationIfNeeded();
     });
   }
 
