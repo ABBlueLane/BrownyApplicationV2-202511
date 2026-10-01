@@ -76,9 +76,17 @@ class ContactChangeRepo extends AppRepository {
     final local = await _customerDataRepo.customerProfileData();
     if (!local.isSuccess) return;
 
+    final field = data.field;
+    final resolvedPhone = field == 'phone'
+        ? (data.phone ?? data.newValue ?? local.data.phone)
+        : (data.phone ?? local.data.phone);
+    final resolvedEmail = field == 'email'
+        ? (data.email ?? data.newValue ?? local.data.email)
+        : (data.email ?? local.data.email);
+
     final updated = local.data.copyWith(
-      email: data.email ?? local.data.email,
-      phone: data.phone ?? local.data.phone,
+      email: resolvedEmail,
+      phone: resolvedPhone,
     );
     _customerDataRepo.saveLocalProfile(updated);
   }

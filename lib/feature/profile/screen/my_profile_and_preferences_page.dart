@@ -806,8 +806,8 @@ class _MyProfileAndPreferencesContentState
               // เปลี่ยน e-mail
               title: context.wording.changeEmail,
               suffixWidget: Assets.svg.icArrowForward.svg(),
-              onTap: () {
-                ChangeContactPage.goToPage(
+              onTap: () async {
+                await ChangeContactPage.goToPage(
                   context,
                   field: ChangeContactField.email,
                 );
@@ -819,8 +819,8 @@ class _MyProfileAndPreferencesContentState
               leadingSvg: Assets.iconProfilePreferences.icCalling,
               title: context.wording.changePhone,
               suffixWidget: Assets.svg.icArrowForward.svg(),
-              onTap: () {
-                ChangeContactPage.goToPage(
+              onTap: () async {
+                await ChangeContactPage.goToPage(
                   context,
                   field: ChangeContactField.phone,
                 );

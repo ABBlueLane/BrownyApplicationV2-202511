@@ -223,11 +223,15 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   controller: _viewModel.emailController,
                   readOnly: hasEmail,
                   onTap: hasEmail
-                      ? () {
-                          ChangeContactPage.goToPage(
+                      ? () async {
+                          final changed = await ChangeContactPage.goToPage(
                             context,
                             field: ChangeContactField.email,
                           );
+                          if (!mounted || changed != true) return;
+                          AppOverlays.showLoading(context);
+                          await _viewModel.fetchProfileData();
+                          AppOverlays.hideLoading();
                         }
                       : null,
                   style: context.textTheme.labelLarge!.copyWith(
@@ -242,11 +246,15 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     prefixIcon: SizedBox.shrink(),
                     suffixIcon: hasEmail
                         ? IconButton(
-                            onPressed: () {
-                              ChangeContactPage.goToPage(
+                            onPressed: () async {
+                              final changed = await ChangeContactPage.goToPage(
                                 context,
                                 field: ChangeContactField.email,
                               );
+                              if (!mounted || changed != true) return;
+                              AppOverlays.showLoading(context);
+                              await _viewModel.fetchProfileData();
+                              AppOverlays.hideLoading();
                             },
                             icon: Assets.svg.icEdit.svg(
                               height: AppDims.size_16.h,
@@ -614,10 +622,15 @@ class _ProfileWidgetState extends State<ProfileWidget> {
 
         IconButton(
           onPressed: () async {
-            await ChangeContactPage.goToPage(
+            final changed = await ChangeContactPage.goToPage(
               context,
               field: ChangeContactField.phone,
             );
+            if (!mounted || changed != true) return;
+            // รีเฟรชโปรไฟล์เพื่อแสดงเบอร์ใหม่บนหน้านี้
+            AppOverlays.showLoading(context);
+            await _viewModel.fetchProfileData();
+            AppOverlays.hideLoading();
           },
           padding: EdgeInsets.zero,
           icon: Assets.svg.icEdit.svg(
@@ -871,6 +884,12 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   }
 
   Future<void> _showBirthDayOffers(BuildContext context) async {
+    // ดึงค่าล่าสุดจาก Gateway ก่อนเปิด popup (กันค้างค่าเก่า / fallback)
+    AppOverlays.showLoading(context);
+    await _viewModel.fetchBirthdayPromoInfo();
+    AppOverlays.hideLoading();
+    if (!mounted) return;
+
     showDialog(
       context: context,
       barrierDismissible: true,

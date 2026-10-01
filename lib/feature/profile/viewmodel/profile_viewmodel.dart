@@ -623,19 +623,26 @@ class ProfileViewModel extends AppViewModelFormFieldValidation {
     }
   }
 
-  Future<void> fetchProfileData() async {
-    // โหลด birthday promo info คู่กับ profile (ไม่บล็อกถ้า error)
-    final profileFuture = repo.fetchProfile('');
-    final promoFuture = repo.fetchBirthdayPromoInfo();
-
-    final profileResult = await profileFuture;
-    final promoResult = await promoFuture;
-
+  /// โหลด Birthday Promo Info จาก Gateway ใหม่ทุกครั้ง
+  ///
+  /// ใช้ตอนเข้า Profile และก่อนเปิด popup เพื่อให้เห็นค่าที่แก้ใน Admin ทันที
+  /// API คืน null / error → เคลียร์แล้วให้ UI ใช้ hardcode fallback
+  Future<void> fetchBirthdayPromoInfo() async {
+    final promoResult = await repo.fetchBirthdayPromoInfo();
     if (promoResult.isSuccess) {
       _birthdayPromoInfo = promoResult.data;
     } else {
       _birthdayPromoInfo = null;
     }
+  }
+
+  Future<void> fetchProfileData() async {
+    // โหลด birthday promo info คู่กับ profile (ไม่บล็อกถ้า error)
+    final profileFuture = repo.fetchProfile('');
+    final promoFuture = fetchBirthdayPromoInfo();
+
+    final profileResult = await profileFuture;
+    await promoFuture;
 
     if (profileResult.isEmpty) {
       if (profileResult.hasError) {

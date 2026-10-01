@@ -179,9 +179,16 @@ class ChangeContactViewModel extends AppViewModelFormFieldValidation {
 
   void _applyConfirmedProfile(ContactChangeData data) {
     final current = currentCustomerProvider.current;
+    final resolvedPhone = isEmail
+        ? current.phone
+        : (data.phone ?? data.newValue ?? current.phone);
+    final resolvedEmail = isEmail
+        ? (data.email ?? data.newValue ?? current.email)
+        : current.email;
+
     currentCustomerProvider.newUser = current.copyWith(
-      email: data.email ?? current.email,
-      phone: data.phone ?? current.phone,
+      email: resolvedEmail,
+      phone: resolvedPhone,
     );
   }
 

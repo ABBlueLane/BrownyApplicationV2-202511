@@ -174,15 +174,17 @@ class _ChangeContactContentState extends State<_ChangeContactContent> {
         ? context.wording.emailChangedSuccessfully
         : context.wording.phoneChangedSuccessfully;
 
-    final confirmed = await AppOverlays.showBrownyDialog(
+    await AppOverlays.showBrownyDialog(
       context,
       title: context.wording.contactChangeSuccessTitle,
       message: message,
       confirmText: context.wording.ok,
+      barrierDismissible: false,
     );
 
     if (!mounted) return;
-    if (confirmed == true && context.canPop()) {
+    // หลังสำเร็จ กลับหน้าเดิมเสมอ (ตั้งค่าโปรไฟล์ / โปรไฟล์)
+    if (context.canPop()) {
       context.pop(true);
     }
   }
